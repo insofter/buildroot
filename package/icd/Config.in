@@ -1,0 +1,16 @@
+config BR2_PACKAGE_ICD
+        bool "icd"
+        select BR2_PACKAGE_SQLITE
+        select BR2_PACKAGE_LIBCURL
+        select BR2_PACKAGE_LIBROXML
+        help
+          ICD is a software package for counting of moving objects. It works
+          with one or more photocell. The passing objects (e.g. people)
+          generates input state transitions which are counted, aggregated
+          and later sendto a server
+
+          This package also relays on some custom device drivers which are
+          expected to be included in the kernel.
+       
+          http://www.insofter.pl
+
