@@ -1,0 +1,116 @@
+#!/bin/sh
+
+print_info()
+{
+  echo "${program_name}: $1" >&2
+}
+
+print_error()
+{
+  echo "${program_name}: Error! $1" >&2
+}
+
+warn_on_error()
+{
+  if [ $? -ne 0 ]; then
+    print_error "$1"
+  fi
+}
+
+exit_on_error()
+{
+  if [ $? -ne 0 ]; then
+    print_error "$1"
+    echo "Program halted" >2
+    exit 1
+  fi
+}
+
+print_usage()
+{
+  echo ""
+  echo "Usage: ${program_name} [FILE] [-h|--help] [-v|--version]"
+  echo ""
+  echo "With no parameters the tool prints the current boot volume (a or b)."
+  echo "More precisely 'a' corresponds to the pair uImage-a and rootfs-a"
+  echo "and 'b' corresponds to the pair uImage-b rootfs-b of ubi volumes."
+  echo "With FILE parameter provided the tool does the update."
+  echo ""
+  echo "  -a|--vol-a      Update volume pair a"
+  echo "  -b|--vol-b      Update volume pair b"
+  echo "  -n|--next       Update the other volume and boot from it"
+  echo "  -f|--force      Do not validate update version"
+  echo "  -h|--help       show this information"
+  echo "  -v|--version    show version information"
+  echo ""
+}
+
+print_version()
+{
+  echo "${PROGRAM_NAME} 1.0"
+  echo "Copyright (c) 2011-2012 Tomasz Rozensztrauch"
+}
+
+# add_image
+#  $1 config
+#  $2 tmp_dir
+#  $
+#  $3 image_name
+add_image()
+{
+  local config header_file image_name image_file image_compression
+  config="$1"
+  tmp_dir="$2"
+  image_name="$3"
+
+  in_file=`echo "${config}" | sed -n -e 's/^'"${image_name}"'=\(.*\)$/\1/p'`
+  print_info "${image_name}: ${in_file}"
+
+  out_file_name=`basename "${in_file}"`".lzma"
+  echo "${base_name}" >> "${tmp_dir}/header"
+ 
+  out_file="${tmp_dir}/"`basename "${in_file}"`".lzma"
+  print_info "${image_name}: in:${in_file} out:${out_file}"
+
+  compression=`echo "${config}" | sed -n -e 's/^'"${image_name}"'-compression=\(.*\)$/\1/p'`
+  print_info "${image_name}-compression: ${compression}"
+
+  lzcat -z "${in_file}" > ${out_file}
+}
+
+program_name=`basename "$0"`
+
+options=`getopt -o hv --long help,version -- "$@"`
+eval set -- "$options"
+while true ; do
+  case "$1" in
+    -h|--help) print_usage; exit 0 ;;
+    -v|--version) print_version; exit 0 ;;
+    --) shift; break ;;
+    *) print_info "Internal error! $1"; exit 1 ;;
+  esac
+done
+
+if [ "x$1" = "x" ]; then
+  config_file="-"
+else
+  config_file="$1"
+fi
+
+config=`cat "${config_file}"`
+exit_on_error "Reading config file failed"
+
+tmp_dir=`mktemp -d`
+print_info "tmp_dir=${tmp_dir}"
+header_file="${tmp_dir}/header"
+print_info "header_file=${header_file}"
+
+version=`echo "${config}" | sed -n -e 's/^version=\(.*\)$/\1/p'`
+print_info "Version: ${version}"
+echo "version=${version}" > "${header_file}"
+
+add_image "${config}" "${tmp_dir}" "uImage"
+add_image "${config}" "${tmp_dir}" "rootfs"
+
+#rm -R "${tmp_dir}"
+
