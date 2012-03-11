@@ -1,0 +1,6 @@
+version=1.0.1
+uImage=./uImage-test
+uImage-compression=lzma
+rootfs=./rootfs-test.ubifs
+rootfs-compression=lzma
+
