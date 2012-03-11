@@ -10,6 +10,12 @@ cd "${1:-.}" || usage
 
 # Check for git and a git repo.
 if head=`git rev-parse --verify --short HEAD 2>/dev/null`; then
+
+	# version from tag; tag is expected to be in form <ver>+<tag-ver>,
+	# e.g. 2011.11+icdtcp3-0.0 --> -icdtcp3-0.0
+	tag=`git describe --abbrev=0 | sed -e 's/^[^+]*+\(.*\)$/-\1/'`
+        printf '%s' "${tag}"
+
 	# Do we have an untagged version?
 	if git name-rev --tags HEAD | grep -E '^HEAD[[:space:]]+(.*~[0-9]*|undefined)$' > /dev/null; then
 		if tag=`git describe 2>/dev/null`; then
