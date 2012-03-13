@@ -110,6 +110,14 @@ tmp_dir=`mktemp -d`
 long_version="2011.11-icdtcp3-0.0-9-g190d396"
 short_version="icdtcp3-0.0-9-g190d396"
 
+# From .config
+#BR2_LINUX_KERNEL_VERSION="3.1.4-icdtcp3-0.0-14-g5585722-dirty"
+
+# From Makefile
+#export BR2_VERSION:=2011.11
+#TOPDIR:=$(shell pwd)
+#export BR2_VERSION_FULL:=$(BR2_VERSION)$(shell $(TOPDIR)/support/scripts/setlocalversion)
+
 info "Creating icdtcp3 update package"
 info "Package version: ${version}"
 echo "version=${long_version}" > "${tmp_dir}/header"
