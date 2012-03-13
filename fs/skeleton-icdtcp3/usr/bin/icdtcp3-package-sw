@@ -1,116 +1,136 @@
 #!/bin/sh
 
-print_info()
-{
-  echo "${program_name}: $1" >&2
-}
-
-print_error()
-{
-  echo "${program_name}: Error! $1" >&2
-}
-
-warn_on_error()
-{
-  if [ $? -ne 0 ]; then
-    print_error "$1"
-  fi
-}
-
-exit_on_error()
-{
-  if [ $? -ne 0 ]; then
-    print_error "$1"
-    echo "Program halted" >2
-    exit 1
-  fi
-}
-
 print_usage()
 {
-  echo ""
-  echo "Usage: ${program_name} [FILE] [-h|--help] [-v|--version]"
-  echo ""
-  echo "With no parameters the tool prints the current boot volume (a or b)."
-  echo "More precisely 'a' corresponds to the pair uImage-a and rootfs-a"
-  echo "and 'b' corresponds to the pair uImage-b rootfs-b of ubi volumes."
-  echo "With FILE parameter provided the tool does the update."
-  echo ""
-  echo "  -a|--vol-a      Update volume pair a"
-  echo "  -b|--vol-b      Update volume pair b"
-  echo "  -n|--next       Update the other volume and boot from it"
-  echo "  -f|--force      Do not validate update version"
-  echo "  -h|--help       show this information"
-  echo "  -v|--version    show version information"
-  echo ""
+>&2 cat <<EOF
+
+Usage: ${program_name} [-o|--output-dir DIR]
+  [-h|--help] [-v|--version]
+
+Builds an update package for icdtcp3 device.
+
+  -o|--output-dir output directory; default is current directory
+  -h|--help       show this information
+  -v|--version    show version information
+
+EOF
 }
 
 print_version()
 {
-  echo "${PROGRAM_NAME} 1.0"
-  echo "Copyright (c) 2011-2012 Tomasz Rozensztrauch"
+>&2 cat <<EOF
+
+${program_name} ${version}
+Copyright (c) 2011-2012 Tomasz Rozensztrauch
+
+EOF
 }
 
+info() 
+{
+  echo "${program_name}: $1" >&2
+}
+
+error() 
+{
+  echo "${program_name}: Error! $1" >&2
+  exit 1;
+}
+
+
 # add_image
-#  $1 config
-#  $2 tmp_dir
-#  $
-#  $3 image_name
+#  $1 image_name
+#  $2 image_compression
+#  $3 output_dir
 add_image()
 {
-  local config header_file image_name image_file image_compression
-  config="$1"
-  tmp_dir="$2"
-  image_name="$3"
+  local image_name image_compression output_dir
+  local image_file image_size file_count output_file
+  local ext compressor
 
-  in_file=`echo "${config}" | sed -n -e 's/^'"${image_name}"'=\(.*\)$/\1/p'`
-  print_info "${image_name}: ${in_file}"
+  image_name="$1"
+  image_compression="$2"
+  output_dir="$3"
 
-  out_file_name=`basename "${in_file}"`".lzma"
-  echo "${base_name}" >> "${tmp_dir}/header"
+  file_count=`ls -1 | grep ${image_name} | wc -l`
+  if [ ${file_count} -eq 1 ]; then
+    image_file=`ls -1 | grep ${image_name}`
+  elif [ ${file_count} -gt 1 ]; then
+    error "More than one image '${image_name}*' found."
+  else
+    error "No image '${image_name}*' found."
+  fi
+
+  image_size=`stat --format=%s ${image_file}`
+  test $? -eq 0 || error "stat '${image_file}' failed"
  
-  out_file="${tmp_dir}/"`basename "${in_file}"`".lzma"
-  print_info "${image_name}: in:${in_file} out:${out_file}"
+  # Figure out what compression tool to use
+  case "${image_compression}" in
+    none) ext=""; compressor="cat -" ;;
+    gzip) ext=".gz"; compressor="gzip -c" ;;
+    bzip2) ext=".bz2"; compressor="bzip2 -c" ;;
+    lzma) ext=".lzma"; compressor="lzma -c" ;;
+    *) error "Invalid or unsupported compression: \
+         ${image_compression}" ;;
+  esac
 
-  compression=`echo "${config}" | sed -n -e 's/^'"${image_name}"'-compression=\(.*\)$/\1/p'`
-  print_info "${image_name}-compression: ${compression}"
+  # Copy image to output location and compress
+  output_file="${output_dir}/${image_file}${ext}"
+  cat "${image_file}" | ${compressor} > "${output_file}"
+  test $? -eq 0 || error "Generating output image '${output_file}' failed"
 
-  lzcat -z "${in_file}" > ${out_file}
+  # Update output header file
+  echo "${image_name}=${image_file}${ext}" >> "${output_dir}/header"
+  echo "${image_name}-size=${image_size}" >> "${output_dir}/header"
+  echo "${image_name}-compression=${image_compression}" >> "${output_dir}/header"
 }
 
 program_name=`basename "$0"`
+version=`git describe | sed -e 's/+/-/g'`
+output_dir=`pwd` #TODO output_dir="./output/images"
 
 options=`getopt -o hv --long help,version -- "$@"`
 eval set -- "$options"
 while true ; do
   case "$1" in
+    -o|--output) output_dir=`cd "$2" && pwd`;
+       test $? -eq 0 || error "Invalid output directory specified"; shift 2 ;;
     -h|--help) print_usage; exit 0 ;;
     -v|--version) print_version; exit 0 ;;
     --) shift; break ;;
-    *) print_info "Internal error! $1"; exit 1 ;;
+    *) error "Parsing parameters failed at '$1'" ;;
   esac
 done
 
-if [ "x$1" = "x" ]; then
-  config_file="-"
-else
-  config_file="$1"
-fi
-
-config=`cat "${config_file}"`
-exit_on_error "Reading config file failed"
+#TODO cd "./output/images"
 
 tmp_dir=`mktemp -d`
-print_info "tmp_dir=${tmp_dir}"
-header_file="${tmp_dir}/header"
-print_info "header_file=${header_file}"
 
-version=`echo "${config}" | sed -n -e 's/^version=\(.*\)$/\1/p'`
-print_info "Version: ${version}"
-echo "version=${version}" > "${header_file}"
+#TODO Read version form ./output/target/etc/{br-version,icdtcp3-version} files
+long_version="2011.11-icdtcp3-0.0-9-g190d396"
+short_version="icdtcp3-0.0-9-g190d396"
 
-add_image "${config}" "${tmp_dir}" "uImage"
-add_image "${config}" "${tmp_dir}" "rootfs"
+info "Creating icdtcp3 update package"
+info "Package version: ${version}"
+echo "version=${long_version}" > "${tmp_dir}/header"
 
-#rm -R "${tmp_dir}"
+info "Adding uImage..."
+add_image "uImage" "lzma" "${tmp_dir}"
+
+info "Adding rootfs..."
+add_image "rootfs" "lzma" "${tmp_dir}"
+
+info "Creating archive..."
+cd "${tmp_dir}"
+test $? -eq 0 || error "cd '${tmp_dir}' failed"
+tar -cf "${output_dir}/${short_version}.img" *
+test $? -eq 0 || error "tar failed"
+
+info "Done"
+
+# Get out of the tmp folder and discard it
+cd
+rm -R "${tmp_dir}"
+
+exit 0
 
