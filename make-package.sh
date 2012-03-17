@@ -102,6 +102,8 @@ while true ; do
   esac
 done
 
+test "x$1" = "x" || error "Parsing parametes failedi at '$1'"
+
 #TODO cd "./output/images"
 
 tmp_dir=`mktemp -d`
