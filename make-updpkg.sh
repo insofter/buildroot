@@ -4,16 +4,16 @@ print_usage()
 {
 >&2 cat <<EOF
 
-Usage: ${program_name} [-o|--output-dir DIR]
+Usage: ${program_name} [-o|--output-dir OUTPUT_DIR]
   [-h|--help] [-v|--version]
 
-Builds an update package for icdtcp3 device.
-The output directory can be specified by -o|--output-dir parameter.
-If not provided then ICDTCP3_RELEASE_DIR environment variable is read.
-If neighter the parameter nor the environment varaible is set
-an error is returned.
+Builds an update packake for icdtcp3 device. The release directory
+can be specified by -o|--output-dir parameter. If the parameter is
+not provided then ICDTCP3_RELEASE_DIR environment variable is used.
+If neighter of them is set then current directory is used.
+The script must be executed from source top directory.
 
-  -o|--output-dir output directory
+  -o|--output-dir release directory
   -h|--help       show this information
   -v|--version    show version information
 
@@ -91,10 +91,15 @@ add_image()
 }
 
 program_name=`basename "$0"`
-version=`git describe | sed -e 's/+/-/g'`
+version=`git describe | sed -e 's/^v//' -e 's/+/-/g'`
 short_version=`git describe | sed -e 's/^[^+]*+\(.*\)$/\1/'`
 kernel_version=`cat .config | sed -n -e 's/^BR2_LINUX_KERNEL_VERSION="\([^"]*\)".*$/\1/p'`
-output_dir="${ICDTCP3_RELEASE_DIR}"
+
+if [ "x${ICDTCP3_RELEASE_DIR}" != "x" ]; then
+  output_dir="${ICDTCP3_RELEASE_DIR}"
+else
+  output_dir=`pwd`
+fi
 
 options=`getopt -o o:hv --long output-dir:,help,version -- "$@"`
 eval set -- "$options"
@@ -109,10 +114,7 @@ while true ; do
   esac
 done
 
-test "x$1" = "x" || error "Parsing parametes failed at '$1'"
-
-test "x${output_dir}" != "x" || error "Neighter -o|--output_dir parameter \
-nor ICDTCP3_RELEASE_DIR environment variable is specified"
+test "x$1" = "x" || error "Parsing parameters failed at '$1'"
 
 cd "output/images"
 test $? -eq 0 || error "cd to 'output/images' directory failed"
