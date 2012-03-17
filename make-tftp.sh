@@ -45,11 +45,11 @@ program_name=`basename "$0"`
 version=`git describe | sed -e 's/+/-/g'`
 output_dir="${ICDTCP3_TFTP_DIR}"
 
-options=`getopt -o ohv --long output,help,version -- "$@"`
+options=`getopt -o o:hv --long output-dir:,help,version -- "$@"`
 eval set -- "$options"
 while true ; do
   case "$1" in
-    -o|--output) output_dir=`cd "$2" && pwd`;
+    -o|--output-dir) output_dir=`cd "$2" && pwd`;
        test $? -eq 0 || error "Invalid output directory specified"; shift 2 ;;
     -h|--help) print_usage; exit 0 ;;
     -v|--version) print_version; exit 0 ;;
@@ -69,7 +69,7 @@ test $? -eq 0 || error "Syncronizing 'uImage' failed"
 
 info "Synchronizing 'rootfs.ubifs'..."
 rsync -a "./output/images/rootfs.ubifs" "${output_dir}/"
-test $? -eq 0 || error "Synchronizing 'tootfs.ubifs' failed"
+test $? -eq 0 || error "Synchronizing 'rootfs.ubifs' failed"
 
 info "Creating 'data.ubifs'..."
 mkfs.ubifs -r output/target/mnt/data -m 2048 -e 258048 -c 4000 -x none \

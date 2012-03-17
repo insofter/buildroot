@@ -13,7 +13,7 @@ to each exported file. The release directory can be specified by
 environment variable is read. If neighter the parameter nor the environment
 varaible is set an error is returned.
 
-  -o|--output-dir tftp directory
+  -o|--output-dir release directory
   -h|--help       show this information
   -v|--version    show version information
 
@@ -46,11 +46,11 @@ version=`git describe | sed -e 's/+/-/g'`
 kernel_version=`cat .config | sed -n -e 's/^BR2_LINUX_KERNEL_VERSION="\([^"]*\)".*$/\1/p'`
 output_dir="${ICDTCP3_RELEASE_DIR}"
 
-options=`getopt -o ohv --long output,help,version -- "$@"`
+options=`getopt -o o:hv --long output-dir:,help,version -- "$@"`
 eval set -- "$options"
 while true ; do
   case "$1" in
-    -o|--output) output_dir=`cd "$2" && pwd`;
+    -o|--output-dir) output_dir=`cd "$2" && pwd`;
        test $? -eq 0 || error "Invalid output directory specified"; shift 2 ;;
     -h|--help) print_usage; exit 0 ;;
     -v|--version) print_version; exit 0 ;;
