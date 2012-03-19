@@ -4,16 +4,18 @@ print_usage()
 {
 >&2 cat <<EOF
 
-Usage: ${program_name} [-o|--output-dir OUTPUT_DIR]
+Usage: ${program_name} [-o|--output-dir OUTPUT_DIR] [-O|--build-dir BUILD_DIR]
   [-h|--help] [-v|--version]
 
-Builds an update packake for icdtcp3 device. The release directory
-can be specified by -o|--output-dir parameter. If the parameter is
-not provided then ICDTCP3_RELEASE_DIR environment variable is used.
-If neighter of them is set then current directory is used.
+Builds an update package for icdtcp3 device. When the project build
+directory is different than the source directory (out-of-source build)
+then the build directory may be provided in -O|--build-dir parameter.
+The output directory can be specified by -o|--output-dir parameter.
+If the parameter is not provided then the build directory is used.
 The script must be executed from source top directory.
 
-  -o|--output-dir release directory
+  -o|--output-dir output directory
+  -O|--build-dir  project build directory
   -h|--help       show this information
   -v|--version    show version information
 
@@ -91,22 +93,21 @@ add_image()
 }
 
 program_name=`basename "$0"`
-version=`git describe | sed -e 's/^v//' -e 's/+/-/g'`
-short_version=`git describe | sed -e 's/^[^+]*+\(.*\)$/\1/'`
+version=`git describe --dirty | sed -e 's/^v//' -e 's/+/-/g'`
+short_version=`git describe --dirty | sed -e 's/^[^+]*+\(.*\)$/\1/'`
 kernel_version=`cat .config | sed -n -e 's/^BR2_LINUX_KERNEL_VERSION="\([^"]*\)".*$/\1/p'`
 
-if [ "x${ICDTCP3_RELEASE_DIR}" != "x" ]; then
-  output_dir="${ICDTCP3_RELEASE_DIR}"
-else
-  output_dir=`pwd`
-fi
+build_dir=`pwd`
 
-options=`getopt -o o:hv --long output-dir:,help,version -- "$@"`
+options=`getopt -o o:O:hv --long output-dir:,build-dir:,help,version -- "$@"`
+test $? -eq 0 || error "Parsing parameters failed"
 eval set -- "$options"
 while true ; do
   case "$1" in
-    -o|--output-dir) output_dir=`cd "$2" && pwd`;
+    -o|--output-dir) output_dir=`eval cd "$2" && pwd`;
        test $? -eq 0 || error "Invalid output directory specified"; shift 2 ;;
+    -O|--build-dir) build_dir=`eval cd "$2" && pwd`;
+       test $? -eq 0 || error "Invalid build directory specified"; shift 2 ;;
     -h|--help) print_usage; exit 0 ;;
     -v|--version) print_version; exit 0 ;;
     --) shift; break ;;
@@ -116,8 +117,13 @@ done
 
 test "x$1" = "x" || error "Parsing parameters failed at '$1'"
 
-cd "output/images"
-test $? -eq 0 || error "cd to 'output/images' directory failed"
+# Let output_dir default to build_dir
+if [ "x${output_dir}" = "x" ]; then
+  output_dir="${build_dir}"
+fi
+
+cd "${build_dir}/output/images"
+test $? -eq 0 || error "Changing directory to '${build_dir}/output/images' directory failed"
 
 tmp_dir=`mktemp -d`
 
