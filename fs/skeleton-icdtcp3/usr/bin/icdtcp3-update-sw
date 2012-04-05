@@ -1,55 +1,43 @@
 #!/bin/sh
 
-print_info()
-{
-  echo "${program_name}: $1" >&2
-}
-
-print_error()
-{
-  echo "${program_name}: Error! $1" >&2
-}
-
-warn_on_error()
-{
-  if [ $? -ne 0 ]; then
-    print_error "$1"
-  fi
-}
-
-exit_on_error()
-{
-  if [ $? -ne 0 ]; then
-    print_error "$1"
-    echo "Program halted" >2
-    exit 1
-  fi
-}
-
 print_usage()
 {
-  echo ""
-  echo "Usage: ${program_name} [ [-a|--vol-a|-b|--vol-b|-n|--next] [-f--force] FILE]"
-  echo "  [-h|--help] [-v|--version]"
-  echo ""
-  echo "With no parameters the tool prints the current boot volume (a or b)."
-  echo "More precisely 'a' corresponds to the pair uImage-a and rootfs-a"
-  echo "and 'b' corresponds to the pair uImage-b rootfs-b of ubi volumes."
-  echo "With FILE parameter provided the tool does the update."
-  echo ""
-  echo "  -a|--vol-a      Update volume pair a"
-  echo "  -b|--vol-b      Update volume pair b"
-  echo "  -n|--next       Update the other volume and boot from it"
-  echo "  -f|--force      Do not validate update version"
-  echo "  -h|--help       show this information"
-  echo "  -v|--version    show version information"
-  echo ""
+>&2 cat <<EOF
+
+Usage: ${program_name} [-v|-version] [-h|--help] [-f|--force] FILE
+
+The tool updates the next volume (the one which is not in use currently)
+with the software image provided with FILE parameter and switches
+the boot volume to next.
+
+  -f|--force         skip version check
+  -h|--help          show this information
+  -v|--version       show version information
+
+EOF
 }
 
 print_version()
 {
-  echo "${PROGRAM_NAME} 1.0"
-  echo "Copyright (c) 2011-2012 Tomasz Rozensztrauch"
+>&2 cat <<EOF
+
+${program_name} ${version}
+Copyright (c) 2011-2012 Tomasz Rozensztrauch
+
+EOF
+}
+
+info() 
+{
+  echo "${program_name}: $1" >&2
+}
+
+error() 
+{
+  echo "${program_name}: Error! $1" >&2
+  if [ "$2" != "noexit" ]; then
+    exit 1;
+  fi
 }
 
 get_ubi_dev()
@@ -60,6 +48,7 @@ get_ubi_dev()
     's/^Volume ID:[[:space:]]*\([[:digit:]]*\).*$/\1/p'`"
   test "x${vol_id}" == "x" && return 1
   echo "/dev/ubi0_${vol_id}"
+  return 0
 }
 
 #
@@ -81,11 +70,10 @@ update_ubi_vol()
 
   # First, get the device (e.g /dev/ubi0_1) asociated with
   # the volume ${image_name} suffixed with ${ubi_boot_vol} ("a" or "b")
-  print_info "Updating ${image_name}-${ubi_boot_vol}"
+  info "Updating ${image_name}-${ubi_boot_vol}"
   ubi_dev=`get_ubi_dev "${image_name}-${ubi_boot_vol}"`
   if [ $? -ne 0 ]; then
-    print_error "Obtaining device for volume \
-      ${image_name}-${ubi_boot_vol} failed"
+    error "Obtaining device for volume ${image_name}-${ubi_boot_vol} failed" noexit
     return 1
   fi
 
@@ -98,7 +86,7 @@ update_ubi_vol()
 
   image_compression=`echo "${header}" | \
     sed -n -e 's/^'"${image_name}"'-compression=\(.*\)$/\1/p'`
-  print_info "image: ${image_file} (size: ${image_size}, compression: ${image_compression})"
+  info "image: ${image_file} (size: ${image_size}, compression: ${image_compression})"
 
   # Figure out what decompression tool to use
   case "${image_compression}" in
@@ -106,15 +94,14 @@ update_ubi_vol()
     gzip) decompressor="gunzip" ;;
     bzip2) decompressor="bunzip2" ;;
     lzma) decompressor="unlzma" ;;
-    *) print_error "Invalid or unsupported compression: \
-         ${image_compression}"; return 1 ;;
+    *) error "Invalid compression: '${image_compression}'" noexit; return 1 ;;
   esac
 
   # Extract image, uncompress and update the volume with it
   tar -x ${image_file} -f ${update_file} -O | ${decompressor} | \
     ubiupdatevol "${ubi_dev}" -s "${image_size}" -
   if [ $? -ne 0 ]; then
-    print_error "Updating ${ubi_dev} failed"
+    error "Updating ${ubi_dev} failed" noexit
     return 1
   fi
 
@@ -122,96 +109,88 @@ update_ubi_vol()
 }
 
 # check_version()
-#  $1 curr_version
-#  $2 version
+#  $1 version
+#  $2 update_version
 check_version()
 {
-  local curr_version version
-  curr_version="$1"
-  version="$2"
+  local version version_full update_version update_version_full
+  local major minor patch
+  version="$1"
+  update_version="$2"
 
-  version_major=`echo "${version}" | cut -d. -f 1`
-  version_minor=`echo "${version}" | cut -d. -f 2`
-  version_patch=`echo "${version}" | cut -d. -f 3`
-  version_full=`printf "%02d%02d%02d" "${version_major}" \
-    "${version_minor}" "${version_patch}"`
+  major=`echo "${version}" | cut -d. -f 1`
+  minor=`echo "${version}" | cut -d. -f 2`
+  patch=`echo "${version}" | cut -d. -f 3`
+  version_full=`printf "%02d%02d%02d" "${major}" "${minor}" "${patch}"`
 
-  curr_version_major=`echo "${version}" | cut -d. -f 1`
-  curr_version_minor=`echo "${version}" | cut -d. -f 2`
-  curr_version_patch=`echo "${version}" | cut -d. -f 3`
-  curr_version_full=`printf "%02d%02d%02d" "${version_major}" \
-    "${version_minor}" "${version_patch}"`
+  major=`echo "${update_version}" | cut -d. -f 1`
+  minor=`echo "${update_version}" | cut -d. -f 2`
+  patch=`echo "${update_version}" | cut -d. -f 3`
+  update_version_full=`printf "%02d%02d%02d" "${major}" "${minor}" "${patch}"`
 
-  test "${version_full}" -gt "${curr_version_full}" && return 0 || return 1
+  test "${update_version_full}" -gt "${version_full}" && return 0 || return 1
 }
 
 program_name=`basename "$0"`
-
-bootcfg_dev=`get_ubi_dev "bootcfg"`
-exit_on_error "Obtaining device for volume bootcfg failed"
-
-bootcfg_aux_dev=`get_ubi_dev "bootcfg-aux"`
-exit_on_error "Obtaining device for volume bootcfg-aux failed"
-
-curr_boot_vol=`cat "${bootcfg_dev}" | cut -d = -f 2`
-test "x${curr_boot_vol}" != "x" 
-exit_on_error "Obtaining current ubi boot volume failed"
-
-next_boot_vol=`test "${curr_boot_vol}" == "a" && echo "b" || echo "a"`
-
-# By default update the other volume 
-ubi_boot_vol="${next_boot_vol}" 
+version=`cat "/etc/br-version"`
 
 # By default run version check
-version_check="yes"
+force="no"
 
-options=`getopt -o abnfhv --long vol-a,vol-b,next,force,help,version -- "$@"`
+options=`getopt -o l:fhv --long volume:,force,help,version -- "$@"`
 eval set -- "$options"
 while true ; do
   case "$1" in
-    -a|--vol-a) ubi_boot_vol="a"; shift 1 ;;
-    -b|--vol-b) ubi_boot_vol="b"; shift 1 ;;
-    -n|--next)  ubi_boot_vol="${next_boot_vol}"; shift 1 ;;
-    -f|--force) version_check="no"; shift 1 ;;
+    -f|--force) force="yes"; shift 1 ;;
     -h|--help) print_usage; exit 0 ;;
     -v|--version) print_version; exit 0 ;;
     --) shift; break ;;
-    *) print_info "Internal error! $1"; exit 1 ;;
+    *) error "Parsing parameters failed at '$1'" ;;
   esac
 done
 
+test "x$1" != "x" || error "Parsing parameters failed. Missing parameter URL"
 update_file="$1"
+shift 1
 
-print_info "Current boot volume: ${curr_boot_vol}"
+test "x$1" = "x" || error "Parsing parameters failed at '$1'"
 
-curr_version=`cat "/etc/icdtcp3-version"`
-print_info "Current version: ${curr_version}"
+bootcfg_dev=`get_ubi_dev "bootcfg"`
+test $? -eq 0 || error "Obtaining device for volume bootcfg failed"
 
-if [ "x${update_file}" != "x" ]; then
-  header=`tar -x header -f ${update_file} -O`
-  exit_on_error "Extracting update header failed"
+bootcfg_aux_dev=`get_ubi_dev "bootcfg-aux"`
+test $? -eq 0 || error "Obtaining device for volume bootcfg-aux failed"
 
-  version=`echo "${header}" | sed -n -e 's/^version=\(.*\)$/\1/p'`
-  print_info "Version from ${update_file}: ${version}"
+curr_boot_vol=`cat "${bootcfg_dev}" | cut -d = -f 2`
+test "x${curr_boot_vol}" != "x" || error "Obtaining current ubi boot volume failed"
 
-  if [ "${version_check}" == "yes" ]; then
-    check_version "${curr_version}" "${version}"
-    exit_on_error "Version validation failed. Too old or incorrect update version"
-  fi
+ubi_boot_vol=`test "${curr_boot_vol}" == "a" && echo "b" || echo "a"`
 
-  update_ubi_vol "${ubi_boot_vol}" "${update_file}" "${header}" "uImage"
-  exit_on_error "Updating uImage-${ubi_boot_vol} volume failed"
+info "Current boot volume: ${version}"
+info "Current version: ${version}"
+info "Volume for update: ${ubi_boot_vol}"
 
-  update_ubi_vol "${ubi_boot_vol}" "${update_file}" "${header}" "rootfs"
-  exit_on_error "Updating rootfs-${ubi_boot_vol} volume failed"
+header=`tar -x header -f ${update_file} -O`
+test $? -eq 0 || error "Extracting update header failed"
 
-  print_info "Setting ubi boot volume to: ${ubi_boot_vol}"
-  printf "ubi-boot-vol=${ubi_boot_vol}\n\0" \
-    | ubiupdatevol ${bootcfg_aux_dev} -s 16 -
-  exit_on_error "Updating ${bootcfg_aux_dev} failed"
+update_version=`echo "${header}" | sed -n -e 's/^version=\(.*\)$/\1/p'`
+info "Version from ${update_file}: ${update_version}"
 
-  ubirename /dev/ubi0 bootcfg bootcfg-aux bootcfg-aux bootcfg
-  exit_on_error "Swaping bootcfg and bootcfg-aux volumes failed."
+if [ "${force}" != "yes" ]; then
+  check_version "${version}" "${update_version}"
+  test $? -eq 0 || error "Version validation failed"
 fi
+
+update_ubi_vol "${ubi_boot_vol}" "${update_file}" "${header}" "uImage"
+test $? -eq 0 || error "Updating uImage-${ubi_boot_vol} volume failed"
+
+update_ubi_vol "${ubi_boot_vol}" "${update_file}" "${header}" "rootfs"
+test $? -eq 0 || error "Updating rootfs-${ubi_boot_vol} volume failed"
+
+info "Setting ubi boot volume to: ${ubi_boot_vol}"
+printf "ubi-boot-vol=${ubi_boot_vol}\n\0" | ubiupdatevol ${bootcfg_aux_dev} -s 16 -
+test $? -eq 0 || error "Updating ${bootcfg_aux_dev} failed"
+ubirename /dev/ubi0 bootcfg bootcfg-aux bootcfg-aux bootcfg
+test $? -eq 0 || error "Swaping bootcfg and bootcfg-aux volumes failed."
 
 exit 0

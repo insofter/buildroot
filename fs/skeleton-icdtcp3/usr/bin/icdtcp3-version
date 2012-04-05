@@ -1,0 +1,96 @@
+#!/bin/sh
+
+print_usage()
+{
+>&2 cat <<EOF
+
+Usage: ${program_name} [-v|-version] [-h|--help]
+
+The tool prints current versions of various system components
+
+  -h|--help        show this information
+  -v|--version     show version information
+
+EOF
+}
+
+print_version()
+{
+>&2 cat <<EOF
+
+${program_name} ${version}
+Copyright (c) 2011-2012 Tomasz Rozensztrauch
+
+EOF
+}
+
+info() 
+{
+  echo "${program_name}: $1" >&2
+}
+
+error() 
+{
+  echo "${program_name}: Error! $1" >&2
+  if [ "$2" != "noexit" ]; then
+    exit 1;
+  fi
+}
+
+get_ubi_dev()
+{
+  local vol_id vol_name
+  vol_name="$1"
+  vol_id="`ubinfo /dev/ubi0 -N ${vol_name} | sed -n -e \
+    's/^Volume ID:[[:space:]]*\([[:digit:]]*\).*$/\1/p'`"
+  test "x${vol_id}" = "x" && return 1
+  echo "/dev/ubi0_${vol_id}"
+  return 0
+}
+
+program_name=`basename "$0"`
+version=`cat "/etc/br-version"`
+
+options=`getopt -o hv --long help,version -- "$@"`
+eval set -- "$options"
+while true ; do
+  case "$1" in
+    -h|--help) print_usage; exit 0 ;;
+    -v|--version) print_version; exit 0 ;;
+    --) shift; break ;;
+    *) error "Parsing parameters failed at '$1'" ;;
+  esac
+done
+
+test "x$1" = "x" || error "Parsing parameters failed at '$1'"
+
+bootcfg_dev=`get_ubi_dev "bootcfg"`
+test $? -eq 0 || error "Obtaining device for volume bootcfg failed"
+
+curr_boot_vol=`cat "${bootcfg_dev}" | cut -d = -f 2`
+test "x${curr_boot_vol}" != "x" || error "Obtaining current ubi boot volume failed"
+
+next_boot_vol=`test "${curr_boot_vol}" == "a" && echo "b" || echo "a"`
+
+echo "Current boot volume: ${curr_boot_vol}"
+echo "Next boot volume: ${next_boot_vol}"
+echo "Current version: ${version}"
+
+bootstrap_version=`grep -o "at91bootstrap.*" /dev/mtd0ro`
+test $? -eq 0 || error "Obtaining bootstrap version failed"
+echo "Bootstrap version: ${bootstrap_version}"
+
+uboot_version=`fw_printenv`
+test $? -eq 0 || error "Obtaining u-boot version failed"
+echo "U-Boot version: ${uboot_version}"
+
+kernel_version=`uname -r`
+test $? -eq 0 || error "Obtaining kernel version failed"
+echo "Kernel version: ${kernel_version}"
+
+icd_version=`icd-config --version`
+test $? -eq 0 || error "Obtaining icd package version failed"
+echo "icd version: ${icd_version}"
+
+exit 0
+
