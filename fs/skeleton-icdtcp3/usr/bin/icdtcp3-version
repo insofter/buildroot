@@ -80,7 +80,7 @@ bootstrap_version=`grep -o "at91bootstrap.*" /dev/mtd0ro`
 test $? -eq 0 || error "Obtaining bootstrap version failed"
 echo "Bootstrap version: ${bootstrap_version}"
 
-uboot_version=`fw_printenv`
+uboot_version=`grep -o "U-Boot[[:space:]][[:digit:]][[:alnum:].-]*" /dev/mtd1ro`
 test $? -eq 0 || error "Obtaining u-boot version failed"
 echo "U-Boot version: ${uboot_version}"
 

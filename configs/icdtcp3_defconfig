@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Buildroot 2011.11-icdtcp3-0.0-00011-g4b37050-dirty Configuration
-# Tue Mar 13 21:58:02 2012
+# Buildroot 2011.11-icdtcp3-0.0-00018-ga2b533f-dirty Configuration
+# Fri Apr  6 09:53:35 2012
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_arm=y
@@ -203,7 +203,7 @@ BR2_ROOTFS_DEVICE_TABLE="target/generic/device_table-icdtcp3.txt"
 # BR2_ROOTFS_SKELETON_DEFAULT is not set
 BR2_ROOTFS_SKELETON_CUSTOM=y
 BR2_ROOTFS_SKELETON_CUSTOM_PATH="fs/skeleton-icdtcp3"
-BR2_ROOTFS_POST_BUILD_SCRIPT=""
+BR2_ROOTFS_POST_BUILD_SCRIPT="support/scripts/icdtcp3-finalize.sh"
 
 #
 # Package Selection for the target
@@ -597,9 +597,7 @@ BR2_PACKAGE_MTD_UBIUPDATEVOL=y
 # BR2_PACKAGE_STATSERIAL is not set
 # BR2_PACKAGE_SYSSTAT is not set
 # BR2_PACKAGE_TI_UTILS is not set
-BR2_PACKAGE_UBOOT_TOOLS=y
-# BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE is not set
-BR2_PACKAGE_UBOOT_TOOLS_FWPRINTENV=y
+# BR2_PACKAGE_UBOOT_TOOLS is not set
 
 #
 # udev requires /dev mgmnt set to udev under System configuration
