@@ -3,7 +3,7 @@
 # at91bootstrap
 #
 #############################################################
-AT91BOOTSTRAP_VERSION = 1.16-icdtcp3-0.0-14-g1f14182
+AT91BOOTSTRAP_VERSION = 1.16-icdtcp3-0.0-15-gc7a8f93
 AT91BOOTSTRAP_SITE = http://www.cattus.info/packages
 AT91BOOTSTRAP_SOURCE = at91bootstrap-$(AT91BOOTSTRAP_VERSION).tar.bz2
 
