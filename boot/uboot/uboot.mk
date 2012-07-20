@@ -3,8 +3,11 @@
 # U-Boot
 #
 #############################################################
-UBOOT_VERSION    = $(call qstrip,$(BR2_TARGET_UBOOT_VERSION))
-UBOOT_BOARD_NAME = $(call qstrip,$(BR2_TARGET_UBOOT_BOARDNAME))
+#UBOOT_VERSION    = $(call qstrip,$(BR2_TARGET_UBOOT_VERSION))
+#UBOOT_BOARD_NAME = $(call qstrip,$(BR2_TARGET_UBOOT_BOARDNAME))
+
+UBOOT_VERSION    = 2011.12-icdtcp3-0.0-7-g6a2bdc7-dirty
+UBOOT_BOARD_NAME = icdtcp3
 
 UBOOT_INSTALL_IMAGES = YES
 
