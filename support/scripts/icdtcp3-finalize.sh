@@ -1,10 +1,11 @@
 #!/bin/sh
 
 TARGET_DIR=$1
-HOST_DIR=${TARGET_DIR}/../host
-BINARIES_DIR=${TARGET_DIR}/../images
+version=${BR2_VERSION_FULL}
 
-${HOST_DIR}/usr/sbin/mkfs.ubifs -r ${TARGET_DIR}/mnt/data \
-  -m 2048 -e 258048 -c 4000 -x none -o ${TARGET_DIR}/usr/share/data.ubifs
+>${TARGET_DIR}/etc/issue cat << EOF
 
-cp ${TARGET_DIR}/usr/share/data.ubifs ${BINARIES_DIR}/
+Welcome to icdtcp3 (${version})
+
+EOF
+

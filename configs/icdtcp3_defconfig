@@ -203,7 +203,7 @@ BR2_ROOTFS_DEVICE_TABLE="target/generic/device_table-icdtcp3.txt"
 # BR2_ROOTFS_SKELETON_DEFAULT is not set
 BR2_ROOTFS_SKELETON_CUSTOM=y
 BR2_ROOTFS_SKELETON_CUSTOM_PATH="fs/skeleton-icdtcp3"
-BR2_ROOTFS_POST_BUILD_SCRIPT=""
+BR2_ROOTFS_POST_BUILD_SCRIPT="support/scripts/icdtcp3-finalize.sh"
 
 #
 # Package Selection for the target
@@ -597,9 +597,7 @@ BR2_PACKAGE_MTD_UBIUPDATEVOL=y
 # BR2_PACKAGE_STATSERIAL is not set
 # BR2_PACKAGE_SYSSTAT is not set
 # BR2_PACKAGE_TI_UTILS is not set
-BR2_PACKAGE_UBOOT_TOOLS=y
-# BR2_PACKAGE_UBOOT_TOOLS_MKIMAGE is not set
-BR2_PACKAGE_UBOOT_TOOLS_FWPRINTENV=y
+# BR2_PACKAGE_UBOOT_TOOLS is not set
 
 #
 # udev requires /dev mgmnt set to udev under System configuration
