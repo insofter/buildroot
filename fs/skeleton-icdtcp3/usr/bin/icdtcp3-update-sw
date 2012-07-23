@@ -61,7 +61,8 @@ get_ubi_dev()
 update_ubi_vol()
 {
   local ubi_boot_vol update_file header image_name
-  local ubi_dev image_size image_compression decompressor
+  local ubi_dev image_file image_version image_size
+  local image_compression decompressor
 
   ubi_boot_vol=$1
   update_file=$2
@@ -81,12 +82,15 @@ update_ubi_vol()
   image_file=`echo "${header}" | \
     sed -n -e 's/^'"${image_name}"'=\(.*\)$/\1/p'`
 
+  image_version=`echo "${header}" | \
+    sed -n -e 's/^'"${image_name}"'-version=\(.*\)$/\1/p'`
+
   image_size=`echo "${header}" | \
     sed -n -e 's/^'"${image_name}"'-size=\(.*\)$/\1/p'`
 
   image_compression=`echo "${header}" | \
     sed -n -e 's/^'"${image_name}"'-compression=\(.*\)$/\1/p'`
-  info "image: ${image_file} (size: ${image_size}, compression: ${image_compression})"
+  info "image: ${image_file} (version: ${image_version}, size: ${image_size}, compression: ${image_compression})"
 
   # Figure out what decompression tool to use
   case "${image_compression}" in
