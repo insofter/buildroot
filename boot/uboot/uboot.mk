@@ -3,11 +3,8 @@
 # U-Boot
 #
 #############################################################
-#UBOOT_VERSION    = $(call qstrip,$(BR2_TARGET_UBOOT_VERSION))
-#UBOOT_BOARD_NAME = $(call qstrip,$(BR2_TARGET_UBOOT_BOARDNAME))
-
-UBOOT_VERSION    = 2011.12-icdtcp3-0.0-8-g5eefa4c
-UBOOT_BOARD_NAME = icdtcp3
+UBOOT_VERSION    = $(call qstrip,$(BR2_TARGET_UBOOT_VERSION))
+UBOOT_BOARD_NAME = $(call qstrip,$(BR2_TARGET_UBOOT_BOARDNAME))
 
 UBOOT_INSTALL_IMAGES = YES
 
@@ -61,6 +58,13 @@ endef
 
 UBOOT_POST_PATCH_HOOKS += UBOOT_APPLY_CUSTOM_PATCHES
 endif
+
+define VERSION_PATCH
+        echo "$(UBOOT_VERSION)" > "$(@D)/VERSION"
+endef
+
+UBOOT_POST_PATCH_HOOKS += VERSION_PATCH
+
 
 define UBOOT_CONFIGURE_CMDS
 	$(TARGET_CONFIGURE_OPTS) $(UBOOT_CONFIGURE_OPTS) 	\
