@@ -14,3 +14,12 @@ config BR2_PACKAGE_ICD
        
           http://www.insofter.pl
 
+if BR2_PACKAGE_ICD
+
+config BR2_ICD_CUSTOM_GIT_REPO_URL
+        string "URL of Git repository"
+
+config BR2_ICD_CUSTOM_GIT_VERSION
+        string "Git version"
+
+endif

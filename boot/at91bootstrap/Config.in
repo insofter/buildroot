@@ -10,6 +10,12 @@ config BR2_TARGET_AT91BOOTSTRAP
 
 if	BR2_TARGET_AT91BOOTSTRAP
 
+config BR2_TARGET_AT91BOOTSTRAP_CUSTOM_GIT_REPO_URL
+        string "URL of Git repository"
+
+config BR2_TARGET_AT91BOOTSTRAP_CUSTOM_GIT_VERSION
+        string "Git version"
+
 config BR2_TARGET_AT91BOOTSTRAP_BOARD
 	string "Bootstrap board"
 	default ""

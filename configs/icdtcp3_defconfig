@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Buildroot 2011.11-icdtcp3-0.0-00027-g14802c2-dirty Configuration
-# Fri Aug  3 22:17:18 2012
+# Buildroot 2011.11-icdtcp3-0.0-00029-gdebcacf-dirty Configuration
+# Sat Aug  4 20:39:41 2012
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_arm=y
@@ -879,6 +879,8 @@ BR2_PACKAGE_LIBROXML=y
 # shared-mime-info requires a toolchain with WCHAR support
 #
 BR2_PACKAGE_ICD=y
+BR2_ICD_CUSTOM_GIT_REPO_URL="$(ICDTCP3_GIT_ROOT)/icd"
+BR2_ICD_CUSTOM_GIT_VERSION="0.0-59-gdff24c3"
 
 #
 # Networking applications
@@ -1137,6 +1139,8 @@ BR2_TARGET_UBOOT_FORMAT_BIN=y
 # BR2_TARGET_UBOOT_FORMAT_KWB is not set
 # BR2_TARGET_UBOOT_NETWORK is not set
 BR2_TARGET_AT91BOOTSTRAP=y
+BR2_TARGET_AT91BOOTSTRAP_CUSTOM_GIT_REPO_URL="$(ICDTCP3_GIT_ROOT)/at91bootstrap"
+BR2_TARGET_AT91BOOTSTRAP_CUSTOM_GIT_VERSION="v1.16+icdtcp3-0.0-15-gc7a8f93"
 BR2_TARGET_AT91BOOTSTRAP_BOARD="icdtcp3"
 # BR2_TARGET_AT91BOOTSTRAP_DATAFLASH is not set
 BR2_TARGET_AT91BOOTSTRAP_NANDFLASH=y

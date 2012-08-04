@@ -4,8 +4,8 @@
 #
 #############################################################
 
-ICD_VERSION = 0.0-59-gdff24c3
-ICD_SITE = $(ICDTCP3_GIT_ROOT)/icd
+ICD_VERSION = $(BR2_ICD_CUSTOM_GIT_VERSION)
+ICD_SITE = $(BR2_ICD_CUSTOM_GIT_REPO_URL)
 ICD_SITE_METHOD = git
 ICD_DEPENDENCIES = sqlite libroxml libcurl
 
