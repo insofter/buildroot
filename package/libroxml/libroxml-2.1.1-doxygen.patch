@@ -1,18 +1,14 @@
-Index: libroxml-2.1.0/Makefile
+[PATCH] remove doxygen from install target
+Index: libroxml-2.1.1/Makefile
 ===================================================================
---- libroxml-2.1.0.orig/Makefile
-+++ libroxml-2.1.0/Makefile
-@@ -113,11 +113,11 @@
- .PHONY : doxy
- doxy : doxy.cfg man.cfg
- 	$P '  DOXYGEN'
--	$E - doxygen doxy.cfg &>/dev/null
-+	$E - doxygen doxy.cfg
- 	$E - cp data/icons/roxml.png docs/html/
- 	$E - cp data/icons/libroxml-ex.png docs/html/
- 	$P '  MAN'
--	$E - doxygen man.cfg &>/dev/null
-+	$E - doxygen man.cfg
- 	$E - chmod -R a+rw docs
+--- libroxml-2.1.1.orig/Makefile
++++ libroxml-2.1.1/Makefile
+@@ -140,7 +140,7 @@
+ 	$E - $(MAKE) -C $(abspath fuse.xml)
  
- .PHONY: clean
+ .PHONY: install
+-install: $(TARGETS) doxy
++install: $(TARGETS)
+ 	$P '  INSTALL DIRS'
+ 	$E mkdir -p $(DESTDIR)/usr/bin
+ 	$E mkdir -p $(DESTDIR)/usr/include
