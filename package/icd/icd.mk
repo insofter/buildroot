@@ -3,9 +3,8 @@
 # icd
 #
 #############################################################
-
-ICD_VERSION = $(BR2_ICD_CUSTOM_GIT_VERSION)
-ICD_SITE = $(BR2_ICD_CUSTOM_GIT_REPO_URL)
+ICD_VERSION = $(call qstrip,$(BR2_ICD_CUSTOM_GIT_VERSION))
+ICD_SITE = $(call qstrip,$(BR2_ICD_CUSTOM_GIT_REPO_URL))
 ICD_SITE_METHOD = git
 ICD_DEPENDENCIES = sqlite libroxml libcurl
 
