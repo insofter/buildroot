@@ -59,15 +59,17 @@ script_version()
 program_name=`basename "$0"`
 version=$(script_version)
 
-options=`getopt -o b:c:hv --long base-dir:,config-dir:,help,version -- "$@"`
+options=`getopt -o p:b:c:hv --long host-dir:,base-dir:,config-dir:,help,version -- "$@"`
 test $? -eq 0 || error "Parsing parameters failed"
 eval set -- "$options"
 while true ; do
   case "$1" in
+    -p|--host-dir) host_dir=`eval cd "$2" && pwd`;
+       test $? -eq 0 || error "Invalid host directory"; shift 2 ;;
     -b|--base-dir) base_dir=`eval cd "$2" && pwd`;
-       test $? -eq 0 || error "Invalid release directory"; shift 2 ;;
+       test $? -eq 0 || error "Invalid base directory"; shift 2 ;;
     -c|--config-dir) config_dir=`eval cd "$2" && pwd`;
-       test $? -eq 0 || error "Invalid release directory"; shift 2 ;;
+       test $? -eq 0 || error "Invalid config directory"; shift 2 ;;
     -h|--help) print_usage; exit 0 ;;
     -v|--version) print_version; exit 0 ;;
     --) shift; break ;;
@@ -77,13 +79,9 @@ done
 
 test "x$1" = "x" || error "Parsing parameters failed at '$1'"
 
-if [ "x${base_dir}" = "x" ]; then
-  base_dir=`pwd`
-fi
-
-if [ "x${config_dir}" = "x" ]; then
-  config_dir=`pwd`
-fi
+test "x${host_dir}" != "x" || error "Parsing parameters failed. Missing host-dir option"
+test "x${base_dir}" != "x" || error "Parsing parameters failed. Missing base-dir option"
+test "x${config_dir}" != "x" || error "Parsing parameters failed. Missing config-dir option"
 
 package_version=`git describe --dirty | grep -oe "icdtcp3-.*" | sed -e 's/icdtcp3-//'`
 test -n "${package_version}" || error "Reading package version failed"
@@ -132,7 +130,7 @@ rsync -a "${base_dir}/images/"  "${temp_dir}"
 test $? -eq 0 || error "Copying package files failed"
 
 info "Creating 'data.ubifs'..."
-mkfs.ubifs -r "${base_dir}/target/mnt/data" -m 2048 -e 258048 -c 4000 -x none \
+"${host_dir}/usr/sbin/mkfs.ubifs" -r "${base_dir}/target/mnt/data" -m 2048 -e 258048 -c 4000 -x none \
  -o "${temp_dir}/data.ubifs"
 test $? -eq 0 || error "Creating 'data.ubifs' failed"
 echo "data=data.ubifs" >> "${temp_dir}/header"

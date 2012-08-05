@@ -122,13 +122,8 @@ done
 
 test "x$1" = "x" || error "Parsing parameters failed at '$1'"
 
-if [ "x${base_dir}" = "x" ]; then
-  base_dir=`pwd`
-fi
-
-if [ "x${config_dir}" = "x" ]; then
-  config_dir=`pwd`
-fi
+test "x${base_dir}" != "x" || error "Parsing parameters failed. Missing base-dir option"
+test "x${config_dir}" != "x" || error "Parsing parameters failed. Missing config-dir option"
 
 package_version=`git describe --dirty | grep -oe "icdtcp3-.*" | sed -e 's/icdtcp3-//'`
 test -n "${package_version}" || error "Reading package version failed"
