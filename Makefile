@@ -42,7 +42,7 @@ export BR2_VERSION_FULL:=$(BR2_VERSION)$(shell $(TOPDIR)/support/scripts/setloca
 noconfig_targets:=menuconfig nconfig gconfig xconfig config oldconfig randconfig \
 	defconfig %_defconfig savedefconfig allyesconfig allnoconfig silentoldconfig release \
 	randpackageconfig allyespackageconfig allnopackageconfig \
-	source-check
+	source-check relpkg updpkg
 
 # Strip quotes and then whitespaces
 qstrip=$(strip $(subst ",,$(1)))
@@ -698,6 +698,12 @@ release: OUT=buildroot-$(BR2_VERSION)
 
 release:
 	git archive --format=tar --prefix=$(OUT)/ master|gzip -9 >$(OUT).tar.gz
+
+relpkg:
+	./make-relpkg.sh --config-dir="$(CONFIG_DIR)" --base-dir="$(BASE_DIR)"
+
+updpkg:
+	./make-updpkg.sh --config-dir="$(CONFIG_DIR)" --base-dir="$(BASE_DIR)"
 
 ################################################################################
 # GENDOC -- generates the make targets needed to build a specific type of
