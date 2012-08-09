@@ -30,4 +30,4 @@
 /home/admin/.ssh/authorized_keys f	600	1000	1000	-	-	-	-	-
 /etc/ssh_host_dsa_key  f	600	1000	1000	-	-	-	-	-
 /etc/ssh_host_rsa_key  f	600	1000	1000	-	-	-	-	-
-/etc/ssh_host_ecsa_key  f	600	1000	1000	-	-	-	-	-
+/etc/ssh_host_ecdsa_key  f	600	1000	1000	-	-	-	-	-
