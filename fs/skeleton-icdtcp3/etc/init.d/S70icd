@@ -24,16 +24,16 @@ start()
 
 
 # databases TODO:
-#	icd-create-config-db #exists while normal start
-#	icd-create-flow-db
+	icd-create-config-db #exists while normal start
+	icd-create-flow-db
 	icd-create-live-db 
-#	icd-init-last-aggr-time
+	icd-init-last-aggr-time
 
 	chmod a+w "/tmp/live.db"
 
 
 # networking	
-	icd-network start
+	icd-network start > /dev/null 2>&1 &
 #	TODO: check from database if that addidtional connection is available
 #	icd-wpa start 
 #	icd-gsm start 
