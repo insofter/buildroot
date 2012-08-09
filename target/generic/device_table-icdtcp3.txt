@@ -22,8 +22,12 @@
 #/usr/X11R6/bin/Xfbdev		     	f	4755	0	0	-	-	-	-	-
 /etc/sudoers.d				d	755	0	0	-	-	-	-	-
 /etc/sudoers.d/admin			f	440	0	0	-	-	-	-	-
-/mnt/data				d	755	0	0	-	-	-	-	-
-/mnt/data/home				d	755	0	0	-	-	-	-	-
-/mnt/data/home/admin			d	700	1000	1000	-	-	-	-	-
-/mnt/data/home/admin/.ssh		d	700	1000	1000	-	-	-	-	-
-/mnt/data/home/admin/.ssh/authorized_keys f	600	1000	1000	-	-	-	-	-
+/etc/sudoers.d/icdtcp3			f	440	0	0	-	-	-	-	-
+/home/				d	755	0	0	-	-	-	-	-
+/home/data				d	755	0	0	-	-	-	-	-
+/home/admin			d	700	1000	1000	-	-	-	-	-
+/home/admin/.ssh		d	700	1000	1000	-	-	-	-	-
+/home/admin/.ssh/authorized_keys f	600	1000	1000	-	-	-	-	-
+/etc/ssh_host_dsa_key  f	600	1000	1000	-	-	-	-	-
+/etc/ssh_host_rsa_key  f	600	1000	1000	-	-	-	-	-
+/etc/ssh_host_ecsa_key  f	600	1000	1000	-	-	-	-	-
