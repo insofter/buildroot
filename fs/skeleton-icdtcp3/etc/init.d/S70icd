@@ -9,6 +9,7 @@ start()
 # directory for public logs
 	umask 000
 	mkdir /tmp/log
+  mkdir /tmp/all
 	
 
 	echo "Starting icd:"
