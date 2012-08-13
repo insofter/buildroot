@@ -1,4 +1,5 @@
 /output
+/__output*
 /dl
 /.auto.deps
 /.config.cmd

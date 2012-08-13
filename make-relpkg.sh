@@ -130,7 +130,8 @@ rsync -a "${base_dir}/images/"  "${temp_dir}"
 test $? -eq 0 || error "Copying package files failed"
 
 info "Creating 'data.ubifs'..."
-"${host_dir}/usr/sbin/mkfs.ubifs" -r "${base_dir}/target/mnt/data" -m 2048 -e 258048 -c 4000 -x none \
+#"${host_dir}/usr/sbin/mkfs.ubifs" -r "${base_dir}/target/mnt/data" -m 2048 -e 258048 -c 4000 -x none \
+"${host_dir}/usr/sbin/mkfs.ubifs" -r "${base_dir}/target/home" -m 2048 -e 258048 -c 4000 -x none \
  -o "${temp_dir}/data.ubifs"
 test $? -eq 0 || error "Creating 'data.ubifs' failed"
 echo "data=data.ubifs" >> "${temp_dir}/header"
