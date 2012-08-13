@@ -6,13 +6,16 @@ source "/etc/profile.d/icd.sh"
 
 start()
 {
+
+#directory for all other tmp stuff
+  umask 022
+  mkdir /tmp/all
+
 # directory for public logs
 	umask 000
 	mkdir /tmp/log
-  mkdir /tmp/all
-	
 
-	echo "Starting icd:"
+	echo -n "Starting icd: "
 
 # nodes for fotodetectors and lcd display
 	if [ ! -c /dev/itd0 ]; then
@@ -48,6 +51,9 @@ start()
 	start-stop-daemon -S -p /tmp/icd-itd-daemon-itd0.pid -a icd-itd-daemon -- \
 		--db="/tmp/live.db" --device="itd0" --daemon \
 		--pidfile="/tmp/icd-itd-daemon-itd0.pid"
+
+
+  echo OK
 }	
 
 stop()
