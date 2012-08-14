@@ -37,7 +37,7 @@ start()
 
 
 # networking	
-	icd-network start > /dev/null 2>&1 &
+	icd-network start & #> /dev/null 2>&1 &
 #	TODO: check from database if that addidtional connection is available
 #	icd-wpa start 
 #	icd-gsm start 
