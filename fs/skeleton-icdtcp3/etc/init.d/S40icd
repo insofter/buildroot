@@ -8,12 +8,12 @@ start()
 {
 
 #directory for all other tmp stuff
-  umask 022
-  mkdir /tmp/all
+#  umask 022
+#  mkdir /tmp/all
 
 # directory for public logs
-	umask 000
-	mkdir /tmp/log
+#	umask 000
+#	mkdir /tmp/log
 
 	echo -n "Starting icd: "
 
