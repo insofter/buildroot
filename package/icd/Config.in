@@ -17,9 +17,9 @@ config BR2_PACKAGE_ICD
 if BR2_PACKAGE_ICD
 
 config BR2_ICD_CUSTOM_GIT_REPO_URL
-        string "URL of Git repository"
+        string /home/insofter/projects/icd
 
 config BR2_ICD_CUSTOM_GIT_VERSION
-        string "Git version"
+        string v0.1-13-g69909b9
 
 endif
