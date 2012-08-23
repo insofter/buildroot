@@ -32,6 +32,10 @@ ttyS0::respawn:/sbin/getty -L ttyS0 115200 vt100 # GENERIC_SERIAL
 # Stuff to do before rebooting
 null::shutdown:/usr/bin/killall klogd
 null::shutdown:/usr/bin/killall syslogd
+null::shutdown:/usr/bin/killall icd-fc-daemon
+null::shutdown:/bin/echo 1 > /sys/devices/platform/gpio-hd44780/cmd
+null::shutdown:/bin/echo "POWER OFF." > /dev/lcd0
+null::shutdown:/bin/echo none > /sys/class/leds/usr/trigger
 null::shutdown:/bin/umount -a -r
 null::shutdown:/sbin/swapoff -a
 
