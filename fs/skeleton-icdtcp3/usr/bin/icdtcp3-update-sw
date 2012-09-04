@@ -94,7 +94,7 @@ update_ubi_vol()
 
   # Figure out what decompression tool to use
   case "${image_compression}" in
-    none) decompressor="cut -" ;;
+    none) decompressor="cat -" ;;
     gzip) decompressor="gunzip" ;;
     bzip2) decompressor="bunzip2" ;;
     lzma) decompressor="unlzma" ;;
