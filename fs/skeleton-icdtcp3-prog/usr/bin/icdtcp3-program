@@ -1,0 +1,56 @@
+#!/bin/sh
+
+info() 
+{
+  echo "${program_name}: $1" >&2
+}
+
+error() 
+{
+  echo "${program_name}: Error! $1" >&2
+  if [ "$2" != "noexit" ]; then
+    exit 1;
+  fi
+}
+
+program_name=`basename "$0"`
+
+info "Factory programming started:"
+
+info "Setting up eth0 address to 192.168.2.21"
+ifconfig eth0 192.168.2.21
+test $? -eq 0 || error "Setting eth0 address failed"
+
+info "Attaching system partition"
+ubiattach -m 3 -d 0
+test $? -eq 0 || error "Attaching system partition failed"
+
+info "Attaching data partition"
+ubiattach -m 4 -d 1
+test $? -eq 0 || error "Attaching data partition failed"
+
+info "Mounting data partition at /mnt"
+mount -t ubifs /dev/ubi1_0 /mnt
+test $? -eq 0 || error "Mounting data partition failed"
+
+cd /mnt
+
+info "Downloading update image"
+curl -O tftp://192.168.2.200/icdtcp3.img
+test $? -eq 0 || error "Downloading update image failed"
+
+info "Updating 1st volume"
+icdtcp3-update-sw -f icdtcp3.img
+test $? -eq 0 || error "Updating 1st volume failed"
+
+info "Updating 2nd volume"
+icdtcp3-update-sw -f icdtcp3.img
+test $? -eq 0 || error "Updating 2nd volume failed"
+
+rm icdtcp3.img
+
+info "Done, rebooting"
+reboot
+
+exit 0
+

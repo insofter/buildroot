@@ -138,11 +138,6 @@ info "Building '${prefix}-${package_version}' update package"
 info "Creating package header..."
 info "version=${package_version}"
 echo "version=${package_version}" > "${temp_dir}/header"
-icd_version=`cat "${config_dir}/.config" | \
-  sed -n -e 's/^BR2_ICD_CUSTOM_GIT_VERSION="\([^"]*\).*$/\1/p'`
-test -n "${icd_version}" || error "Reading icd version failed"
-info "version-icd=${icd_version}"
-echo "version-icd=${icd_version}" >> "${temp_dir}/header"
 
 info "Adding uImage..."
 uimage_version=`cat "${config_dir}/.config" | \

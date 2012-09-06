@@ -701,10 +701,8 @@ release:
 	git archive --format=tar --prefix=$(OUT)/ master|gzip -9 >$(OUT).tar.gz
 
 relpkg: world
-	./make-relpkg.sh --host-dir="$(HOST_DIR)" --config-dir="$(CONFIG_DIR)" --base-dir="$(BASE_DIR)"
-
-updpkg: world
 	./make-updpkg.sh --config-dir="$(CONFIG_DIR)" --base-dir="$(BASE_DIR)"
+	./make-relpkg.sh --host-dir="$(HOST_DIR)" --config-dir="$(CONFIG_DIR)" --base-dir="$(BASE_DIR)"
 
 ################################################################################
 # GENDOC -- generates the make targets needed to build a specific type of

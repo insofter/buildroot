@@ -96,47 +96,43 @@ info "Building '${prefix}-${package_version}' package"
 info "Creating package header..."
 info "version=${package_version}"
 echo "version=${package_version}" > "${temp_dir}/header"
-icd_version=`cat "${config_dir}/.config" | \
-  sed -n -e 's/^BR2_ICD_CUSTOM_GIT_VERSION="\([^"]*\).*$/\1/p'`
-test -n "${icd_version}" || error "Reading icd version failed"
-info "version-icd=${icd_version}"
-echo "version-icd=${icd_version}" >> "${temp_dir}/header"
+
+info "Adding at91bootstrap.bin..."
 at91bootstrap_version=`cat "${config_dir}/.config" | \
   sed -n -e 's/^BR2_TARGET_AT91BOOTSTRAP_CUSTOM_GIT_VERSION="\([^"]*\).*$/\1/p'`
 test -n "${at91bootstrap_version}" || error "Reading at91bootstrap version failed"
 echo "at91bootstrap=at91bootstrap.bin" >> "${temp_dir}/header"
 info "at91bootstrap-version=${at91bootstrap_version}"
 echo "at91bootstrap-version=${at91bootstrap_version}" >> "${temp_dir}/header"
+rsync -a "${base_dir}/images/at91bootstrap.bin"  "${temp_dir}"
+test $? -eq 0 || error "Copying at91bootstrap.bin failed"
+
+info "Adding u-boot.bin..."
 uboot_version=`cat "${config_dir}/.config" | \
   sed -n -e 's/^BR2_TARGET_UBOOT_VERSION="*\([^"]*\).*$/\1/p'`
 test -n "${uboot_version}" || error "Reading u-boot version failed"
 echo "u-boot=u-boot.bin" >> "${temp_dir}/header"
 info "u-boot-version=${uboot_version}"
 echo "u-boot-version=${uboot_version}" >> "${temp_dir}/header"
-uimage_version=`cat "${config_dir}/.config" | \
-  sed -n -e 's/^BR2_LINUX_KERNEL_VERSION="*\([^"]*\).*$/\1/p'`
-test -n "${uimage_version}" || error "Reading uimage version failed"
-echo "uimage=uImage" >> "${temp_dir}/header"
-info "uimage-version=${uimage_version}"
-echo "uimage-version=${uimage_version}" >> "${temp_dir}/header"
-rootfs_version=`git describe --dirty`
-test -n "${rootfs_version}" || error "Reading rootfs version failed"
-echo "rootfs=rootfs.ubifs" >> "${temp_dir}/header"
-info "rootfs-version=${rootfs_version}"
-echo "rootfs-version=${rootfs_version}" >> "${temp_dir}/header"
+rsync -a "${base_dir}/images/u-boot.bin"  "${temp_dir}"
+test $? -eq 0 || error "Copying u-boot.bin failed"
 
-info "Copying files..."
-rsync -a "${base_dir}/images/"  "${temp_dir}"
-test $? -eq 0 || error "Copying package files failed"
+info "Adding ${prefix}.img..."
+echo "${prefix}=icdtcp3.img" >> "${temp_dir}/header"
+info "${prefix}-version=${package_version}"
+echo "${prefix}-version=${package_version}" >> "${temp_dir}/header"
+rsync -a "${base_dir}/images/${prefix}-${package_version}.img"  "${temp_dir}/${prefix}.img"
+test $? -eq 0 || error "Copying ${prefix}.img failed"
 
 info "Creating 'data.ubifs'..."
-#"${host_dir}/usr/sbin/mkfs.ubifs" -r "${base_dir}/target/mnt/data" -m 2048 -e 258048 -c 4000 -x none \
+data_version=`git describe --dirty`
+test -n "${data_version}" || error "Reading data version failed"
+echo "data=data.ubifs" >> "${temp_dir}/header"
+info "data-version=${data_version}"
+echo "data-version=${data_version}" >> "${temp_dir}/header"
 "${host_dir}/usr/sbin/mkfs.ubifs" -r "${base_dir}/target/home" -m 2048 -e 258048 -c 4000 -x none \
  -o "${temp_dir}/data.ubifs"
 test $? -eq 0 || error "Creating 'data.ubifs' failed"
-echo "data=data.ubifs" >> "${temp_dir}/header"
-info "data-version=${rootfs_version}"
-echo "data-version=${rootfs_version}" >> "${temp_dir}/header"
 
 info "Creating archive '${base_dir}/images/${prefix}-${package_version}.tar.bz2'..."
 cd "${temp_dir}"
