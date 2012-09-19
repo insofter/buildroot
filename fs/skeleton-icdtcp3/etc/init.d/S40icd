@@ -47,10 +47,9 @@ start()
 	start-stop-daemon -S -p /tmp/icd-fc-daemon.pid -a icd-fc-daemon \
 		-- --db="/tmp/live.db" --daemon --pidfile="/tmp/icd-fc-daemon.pid"
 
-# daemon for fotodetectors (TODO: now 1, need 4)
+# daemon for fotodetectors
 	start-stop-daemon -S -p /tmp/icd-itd-daemon-itd0.pid -a icd-itd-daemon -- \
-		--db="/tmp/live.db" --device="itd0" --daemon \
-		--pidfile="/tmp/icd-itd-daemon-itd0.pid"
+		--db="/tmp/live.db" --daemon --pidfile="/tmp/icd-itd-daemon-itd0.pid"
 
 # daemon for data transfer
   icd-cron --db="/tmp/live.db" --daemon --pidfile="/tmp/icd-cron.pid"
