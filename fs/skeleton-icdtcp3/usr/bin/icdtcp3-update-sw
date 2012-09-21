@@ -4,7 +4,7 @@ print_usage()
 {
 >&2 cat <<EOF
 
-Usage: ${program_name} [-v|-version] [-h|--help] [-f|--force] FILE
+Usage: ${program_name} [-v|-version] [-h|--help] [-f|--force] [-t|--type=TYPE] FILE
 
 The tool updates the next volume (the one which is not in use currently)
 with the software image provided with FILE parameter and switches
@@ -13,6 +13,7 @@ the boot volume to next.
   -f|--force         skip version check
   -h|--help          show this information
   -v|--version       show version information
+  -t|--type=TYPE     software type
 
 EOF
 }
@@ -135,19 +136,23 @@ check_version()
   test "${update_version_full}" -gt "${version_full}" && return 0 || return 1
 }
 
+# MAIN MAIN MAIN MAIN MAIN 
+
+
 program_name=`basename "$0"`
-version=`cat "/etc/br-version"`
+#version=`cat "/etc/br-version"`
 
 # By default run version check
 force="no"
 
-options=`getopt -o l:fhv --long volume:,force,help,version -- "$@"`
+options=`getopt -o l:fhvt: --long volume:,force,help,version,type: -- "$@"`
 eval set -- "$options"
 while true ; do
   case "$1" in
     -f|--force) force="yes"; shift 1 ;;
     -h|--help) print_usage; exit 0 ;;
     -v|--version) print_version; exit 0 ;;
+    -t|--type) type=$2 ; shift 2 ;;
     --) shift; break ;;
     *) error "Parsing parameters failed at '$1'" ;;
   esac
@@ -158,6 +163,9 @@ update_file="$1"
 shift 1
 
 test "x$1" = "x" || error "Parsing parameters failed at '$1'"
+
+test $force = "no" && test "$type" != "`cat /etc/software_type`" \
+  && error "Different software type"
 
 bootcfg_dev=`get_ubi_dev "bootcfg"`
 test $? -eq 0 || error "Obtaining device for volume bootcfg failed"
@@ -180,10 +188,10 @@ test $? -eq 0 || error "Extracting update header failed"
 update_version=`echo "${header}" | sed -n -e 's/^version=\(.*\)$/\1/p'`
 info "Version from ${update_file}: ${update_version}"
 
-if [ "${force}" != "yes" ]; then
-  check_version "${version}" "${update_version}"
-  test $? -eq 0 || error "Version validation failed"
-fi
+#if [ "${force}" != "yes" ]; then
+#  check_version "${version}" "${update_version}"
+#  test $? -eq 0 || error "Version validation failed"
+#fi
 
 update_ubi_vol "${ubi_boot_vol}" "${update_file}" "${header}" "uImage"
 test $? -eq 0 || error "Updating uImage-${ubi_boot_vol} volume failed"
