@@ -704,6 +704,12 @@ relpkg: world
 	./make-updpkg.sh --config-dir="$(CONFIG_DIR)" --base-dir="$(BASE_DIR)"
 	./make-relpkg.sh --host-dir="$(HOST_DIR)" --config-dir="$(CONFIG_DIR)" --base-dir="$(BASE_DIR)"
 
+##MOJE##MOJE##MOJE##
+newicd: 
+	./make-newicd.sh
+
+##MOJE##MOJE##MOJE##
+
 ################################################################################
 # GENDOC -- generates the make targets needed to build a specific type of
 #           asciidoc documentation.
