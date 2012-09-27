@@ -23,7 +23,7 @@ if [ "$PS1" ]; then
     export INPUTRC=/etc/inputrc
     export DMALLOC_OPTIONS=debug=0x34f47d83,inter=100,log=logfile
 
-    echo -ne "\033]0;ICDTCP3\007"
+    echo -ne "\033]0;ICDTCP3_SHELL\007"
 
 a() {
   if [ "$1" = "-" ]
