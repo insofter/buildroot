@@ -42,7 +42,12 @@ git add configs/icdtcp3_defconfig
 
 MSG="icd="$VER" ++"$INF
 
-MSG=`echo "icd="$VER" ++"$INF | cut --bytes=1-48`"++"
+if [ `echo $MSG | wc -c` -gt 48 ]
+then
+  MSG=`echo "icd="$VER" ++"$INF | cut --bytes=1-45`"...++"
+else
+  MSG=`echo "icd="$VER" ++"$INF | cut --bytes=1-48`"++"
+fi
 
 git commit -m "$MSG"
 
