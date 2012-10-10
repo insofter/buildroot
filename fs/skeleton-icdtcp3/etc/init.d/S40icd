@@ -7,56 +7,55 @@ source "/etc/profile.d/icd.sh"
 start()
 {
 
-#directory for all other tmp stuff
-#  umask 022
-#  mkdir /tmp/all
+  #directory for all other tmp stuff
+  #  umask 022
+  #  mkdir /tmp/all
 
-# directory for public logs
-#	umask 000
-#	mkdir /tmp/log
+  # directory for public logs
+  #	umask 000
+  #	mkdir /tmp/log
 
-	echo "Starting icd: "
+  echo "Starting icd: "
 
-# nodes for fotodetectors and lcd display
-	if [ ! -c /dev/itd0 ]; then
-		mknod /dev/itd0 c 251 0
-		mknod /dev/itd1 c 251 1
-		mknod /dev/itd2 c 251 2
-		mknod /dev/itd3 c 251 3
-		mknod /dev/lcd0 c 250 0
-	fi
-  echo "++mknod itdX"
+  # nodes for fotodetectors and lcd display
+  if [ ! -c /dev/itd0 ]; then
+    mknod /dev/itd0 c 251 0
+    mknod /dev/itd1 c 251 1
+    mknod /dev/itd2 c 251 2
+    mknod /dev/itd3 c 251 3
+    mknod /dev/lcd0 c 250 0
+    echo "++mknod itdX"
+  fi
 
 
-# databases TODO:
-	icd-create-config-db 
-	icd-create-flow-db
-	icd-create-live-db 
-	icd-init-last-aggr-time
+  # databases TODO:
+  icd-create-config-db 
+  icd-create-flow-db
+  icd-create-live-db 
+#  icd-init-last-aggr-time
 
-	chmod a+w "/tmp/tmp.db"
 
   echo "++databases"
 
-# networking	
-	icd-network start & #> /dev/null 2>&1 &
-#	TODO: check from database if that addidtional connection is available
-#	icd-wpa start 
-#	icd-gsm start 
+  # networking	
+  icd-network start & #> /dev/null 2>&1 &
+  #	TODO: check from database if that addidtional connection is available
+  #	icd-wpa start 
+  #	icd-gsm start 
 
-echo "++network"
+  echo "++network"
 
-# daemon for lcd and buttons
-	start-stop-daemon -S -p /tmp/icd-fc-daemon.pid -a icd-fc-daemon \
-		-- --db="/tmp/live.db" --daemon --pidfile="/tmp/icd-fc-daemon.pid"
+  # daemon for lcd and buttons
+  start-stop-daemon -S -p /tmp/icd-fc-daemon.pid -a icd-fc-daemon \
+    -- --db="${ICD_CONFIG_DB}" --daemon --pidfile="/tmp/icd-fc-daemon.pid"
 
-# daemon for fotodetectors
-	start-stop-daemon -S -p /tmp/icd-itd-daemon-itd0.pid -a icd-itd-daemon -- \
-		--db="/tmp/live.db" --daemon --pidfile="/tmp/icd-itd-daemon-itd0.pid"
+  # daemon for fotodetectors
+#  start-stop-daemon -S -p /tmp/icd-itd-daemon-itd0.pid -a icd-itd-daemon -- \
+#    --db="/tmp/live.db" --daemon --pidfile="/tmp/icd-itd-daemon-itd0.pid"
 
   #TODO:
-# daemon for data transfer
-#  icd-cron --db="/tmp/live.db" --daemon --pidfile="/tmp/icd-cron.pid"
+  # daemon for data transfer
+  #  icd-cron --db="/tmp/live.db" --daemon --pidfile="/tmp/icd-cron.pid"
 
   echo "++daemons"
 
@@ -65,30 +64,31 @@ echo "++network"
 
 stop()
 {
-	echo -n "Stopping sshd: "
-	icd-network stop
+  #TODO:
+  echo -n "Stopping sshd: "
+  icd-network stop
 }
 
 restart() 
 {
- stop
- sleep 1
- start
+  stop
+  sleep 1
+  start
 }	
 
 case "$1" in
-	start)
-		start
-		;;
-	stop)
-		stop
-		;;
-	restart|reload)
-		restart
-		;;
-	*)
-		echo $"Usage: $0 {start|stop|restart}"
-		exit 1
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart|reload)
+    restart
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|restart}"
+    exit 1
 esac
 
 exit $?
