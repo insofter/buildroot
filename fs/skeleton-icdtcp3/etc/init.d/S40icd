@@ -15,7 +15,7 @@ start()
 #	umask 000
 #	mkdir /tmp/log
 
-	echo -n "Starting icd: "
+	echo "Starting icd: "
 
 # nodes for fotodetectors and lcd display
 	if [ ! -c /dev/itd0 ]; then
@@ -25,16 +25,18 @@ start()
 		mknod /dev/itd3 c 251 3
 		mknod /dev/lcd0 c 250 0
 	fi
+  echo "++mknod itdX"
 
 
 # databases TODO:
-	icd-create-config-db #exists while normal start
+	icd-create-config-db 
 	icd-create-flow-db
 	icd-create-live-db 
 	icd-init-last-aggr-time
 
-	chmod a+w "/tmp/live.db"
+	chmod a+w "/tmp/tmp.db"
 
+  echo "++databases"
 
 # networking	
 	icd-network start & #> /dev/null 2>&1 &
@@ -42,6 +44,7 @@ start()
 #	icd-wpa start 
 #	icd-gsm start 
 
+echo "++network"
 
 # daemon for lcd and buttons
 	start-stop-daemon -S -p /tmp/icd-fc-daemon.pid -a icd-fc-daemon \
@@ -51,11 +54,13 @@ start()
 	start-stop-daemon -S -p /tmp/icd-itd-daemon-itd0.pid -a icd-itd-daemon -- \
 		--db="/tmp/live.db" --daemon --pidfile="/tmp/icd-itd-daemon-itd0.pid"
 
+  #TODO:
 # daemon for data transfer
-  icd-cron --db="/tmp/live.db" --daemon --pidfile="/tmp/icd-cron.pid"
+#  icd-cron --db="/tmp/live.db" --daemon --pidfile="/tmp/icd-cron.pid"
 
+  echo "++daemons"
 
-  echo OK
+  echo "Start icd DONE"
 }	
 
 stop()
