@@ -23,14 +23,15 @@ then
   exit 1
 fi
 
-if ! [ -e .config ]
+if [ -e .config ]   
 then
-  make icdtcp3_defconfig
+  mv .config .config.old
 fi
+make icdtcp3_defconfig
 
-mv .config .config.old
+mv .config .config.tmp
 
-cat .config.old | grep -v "BR2_ICD_CUSTOM_GIT_VERSION" > .config
+cat .config.tmp | grep -v "BR2_ICD_CUSTOM_GIT_VERSION" > .config
 
 echo 'BR2_ICD_CUSTOM_GIT_VERSION="'$VER'"' >> .config
 
