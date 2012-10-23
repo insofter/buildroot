@@ -50,8 +50,8 @@ start()
     -- --db="${ICD_CONFIG_DB}" --daemon --pidfile="/tmp/icd-fc-daemon.pid"
 
   # daemon for fotodetectors
-#  start-stop-daemon -S -p /tmp/icd-itd-daemon-itd0.pid -a icd-itd-daemon -- \
-#    --db="/tmp/live.db" --daemon --pidfile="/tmp/icd-itd-daemon-itd0.pid"
+  start-stop-daemon -S -p /tmp/icd-itd-daemon-itd0.pid -a icd-itd-daemon -- \
+    --daemon --pidfile="/tmp/icd-itd-daemon-itd0.pid"
 
   #TODO:
   # daemon for data transfer
