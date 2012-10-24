@@ -47,7 +47,7 @@ start()
 
   # daemon for lcd and buttons
   start-stop-daemon -S -p /tmp/icd-fc-daemon.pid -a icd-fc-daemon \
-    -- --db="${ICD_CONFIG_DB}" --daemon --pidfile="/tmp/icd-fc-daemon.pid"
+    -- --daemon --pidfile="/tmp/icd-fc-daemon.pid"
 
   # daemon for fotodetectors
   start-stop-daemon -S -p /tmp/icd-itd-daemon-itd0.pid -a icd-itd-daemon -- \
@@ -55,7 +55,7 @@ start()
 
   #TODO:
   # daemon for data transfer
-  #  icd-cron --db="/tmp/live.db" --daemon --pidfile="/tmp/icd-cron.pid"
+  icd-cron --daemon --pidfile="/tmp/icd-cron.pid"
 
   echo "++daemons"
 
