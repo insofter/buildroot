@@ -45,6 +45,10 @@ start()
 
   echo "++network"
 
+  icd-wifi-daemon &
+
+  echo "++wifi"
+
   # daemon for lcd and buttons
   start-stop-daemon -S -p /tmp/icd-fc-daemon.pid -a icd-fc-daemon \
     -- --daemon --pidfile="/tmp/icd-fc-daemon.pid"
