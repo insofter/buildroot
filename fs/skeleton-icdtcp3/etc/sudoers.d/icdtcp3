@@ -1,1 +1,1 @@
-icdtcp3 ALL=(ALL) NOPASSWD: /usr/bin/icd-wpa, /sbin/hwclock, /bin/date, /sbin/halt, /sbin/reboot, /usr/bin/icdtcp3-update-sw
+icdtcp3 ALL=(ALL) NOPASSWD: /usr/sbin/wpa_cli, /sbin/hwclock, /bin/date, /sbin/halt, /sbin/reboot, /usr/bin/icdtcp3-update-sw
