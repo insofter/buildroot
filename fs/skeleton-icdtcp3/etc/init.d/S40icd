@@ -6,15 +6,6 @@ source "/etc/profile.d/icd.sh"
 
 start()
 {
-
-  #directory for all other tmp stuff
-  #  umask 022
-  #  mkdir /tmp/all
-
-  # directory for public logs
-  #	umask 000
-  #	mkdir /tmp/log
-
   echo "Starting icd: "
 
   # nodes for fotodetectors and lcd display
@@ -29,19 +20,12 @@ start()
 
 
   # databases TODO:
-  icd-create-config-db 
-  icd-create-flow-db
+  icd-create-data 
   icd-create-live-db 
-#  icd-init-last-aggr-time
-
 
   echo "++databases"
 
-  # networking	
   icd-network start & #> /dev/null 2>&1 &
-  #	TODO: check from database if that addidtional connection is available
-  #	icd-wpa start 
-  #	icd-gsm start 
 
   echo "++network"
 
@@ -66,32 +50,12 @@ start()
   echo "Start icd DONE"
 }	
 
-stop()
-{
-  #TODO:
-  echo -n "Stopping sshd: "
-  icd-network stop
-}
-
-restart() 
-{
-  stop
-  sleep 1
-  start
-}	
-
 case "$1" in
   start)
     start
     ;;
-  stop)
-    stop
-    ;;
-  restart|reload)
-    restart
-    ;;
   *)
-    echo $"Usage: $0 {start|stop|restart}"
+    echo $"Usage: $0 {start}"
     exit 1
 esac
 
