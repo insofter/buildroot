@@ -32,12 +32,10 @@ info()
 {
   echo "${program_name}: $1" >&2
 
- # echo 15 > /sys/devices/platform/gpio-hd44780/cmd # init displaying mode
- # echo 1 > /sys/devices/platform/gpio-hd44780/cmd # 1st line && clear
- # echo $1 | cut --bytes=1-16 > /dev/lcd0
- # echo 192 > /sys/devices/platform/gpio-hd44780/cmd #2nd line
- # echo $1 | cut --bytes=17-32 > /dev/lcd0
-
+  echo 1 > /sys/devices/platform/gpio-hd44780/cmd # 1st line && clear
+  echo $1 | cut --bytes=1-16 > /dev/lcd0
+  echo 192 > /sys/devices/platform/gpio-hd44780/cmd #2nd line
+  echo $1 | cut --bytes=17-32 > /dev/lcd0
 }
 
 error() 
