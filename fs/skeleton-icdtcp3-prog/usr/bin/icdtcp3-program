@@ -23,6 +23,7 @@ program_name=`basename "$0"`
 mknod /dev/lcd0 c 250 0
 sleep 1
 echo 15 > /sys/devices/platform/gpio-hd44780/cmd # init displaying mode
+echo "Factory programming" > /dev/lcd0
 
 info "Factory programming started:"
 
