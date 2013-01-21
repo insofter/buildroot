@@ -25,11 +25,11 @@ start()
 
   echo "++databases"
 
-  icd-network start & #> /dev/null 2>&1 &
+  icd-network start 2>&1 | icd-logrotate /tmp/log/network_eth0.log & #> /dev/null 2>&1 &
 
   echo "++network"
 
-  icd-wifi-daemon &
+  icd-wifi-daemon 2>&1 | icd-logrotate /tmp/log/wifi_daemon.log &
 
   echo "++wifi"
 
