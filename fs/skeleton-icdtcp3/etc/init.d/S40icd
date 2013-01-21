@@ -1,7 +1,5 @@
 #!/bin/sh
-#
-# icd				Starts icd.
-#
+
 source "/etc/profile.d/icd.sh"
 
 start()
@@ -19,31 +17,30 @@ start()
   fi
 
 
-  # databases TODO:
+  # databases
   icd-create-data 
   icd-create-live-db 
 
   echo "++databases"
 
-  icd-network start 2>&1 | icd-logrotate /tmp/log/network_eth0.log & #> /dev/null 2>&1 &
+  icd-run-daemon -- icd-network start
 
   echo "++network"
 
-  icd-wifi-daemon 2>&1 | icd-logrotate /tmp/log/wifi_daemon.log &
+  icd-run-daemon --logfile="/tmp/log/wifi_daemon.log" -- icd-wifi-daemon 
 
   echo "++wifi"
 
   # daemon for lcd and buttons
-  start-stop-daemon -S -p /tmp/icd-fc-daemon.pid -a icd-fc-daemon \
-    -- --daemon --pidfile="/tmp/icd-fc-daemon.pid"
+  icd-run-daemon --nolog -- icd-fc-daemon
 
   # daemon for fotodetectors
   start-stop-daemon -S -p /tmp/icd-itd-daemon-itd0.pid -a icd-itd-daemon -- \
     --daemon --pidfile="/tmp/icd-itd-daemon-itd0.pid"
+#icd-run-daemon --nolog -- icd-itd-daemon
 
-  #TODO:
   # daemon for data transfer
-  icd-cron --daemon --pidfile="/tmp/icd-cron.pid"
+  icd-run-daemon --nolog -- icd-cron 
 
   echo "++daemons"
 
