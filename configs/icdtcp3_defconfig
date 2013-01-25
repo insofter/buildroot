@@ -10,6 +10,7 @@ BR2_ROOTFS_DEVICE_TABLE="target/generic/device_table-icdtcp3.txt"
 BR2_ROOTFS_SKELETON_CUSTOM=y
 BR2_ROOTFS_SKELETON_CUSTOM_PATH="fs/skeleton-icdtcp3"
 BR2_ROOTFS_POST_BUILD_SCRIPT="support/scripts/icdtcp3-finalize.sh"
+BR2_PACKAGE_BUSYBOX_CONFIG="package/busybox/busybox-1.19.x.icdtcp3.config"
 BR2_PACKAGE_BUSYBOX_SHOW_OTHERS=y
 BR2_PACKAGE_MTD=y
 BR2_PACKAGE_USB_MODESWITCH=y
