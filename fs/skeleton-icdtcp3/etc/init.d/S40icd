@@ -28,8 +28,10 @@ start()
   echo "++network"
 
   icd-run-daemon --logfile="/tmp/log/wifi_daemon.log" -- icd-wifi-daemon 
-
   echo "++wifi"
+
+  icd-run-daemon  -- icd-gsm-daemon 
+  echo "++gsm"
 
   # daemon for lcd and buttons
   icd-run-daemon --nolog -- icd-fc-daemon
