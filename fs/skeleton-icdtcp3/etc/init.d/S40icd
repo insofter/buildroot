@@ -20,11 +20,9 @@ start()
   # databases
   icd-create-data 
   icd-create-live-db 
-
   echo "++databases"
 
   icd-run-daemon -- icd-network start
-
   echo "++network"
 
   icd-run-daemon --logfile="/tmp/log/wifi_daemon.log" -- icd-wifi-daemon 
@@ -37,13 +35,10 @@ start()
   icd-run-daemon --nolog -- icd-fc-daemon
 
   # daemon for fotodetectors
-  start-stop-daemon -S -p /tmp/icd-itd-daemon-itd0.pid -a icd-itd-daemon -- \
-    --daemon --pidfile="/tmp/icd-itd-daemon-itd0.pid"
-#icd-run-daemon --nolog -- icd-itd-daemon
+  icd-run-daemon --nolog -- icd-itd-daemon
 
-  # daemon for data transfer
+  # daemon for data transfer and sync db
   icd-run-daemon --nolog -- icd-cron 
-
   echo "++daemons"
 
   echo "Start icd DONE"
