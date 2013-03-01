@@ -24,6 +24,11 @@ mknod /dev/lcd0 c 250 0
 sleep 1
 echo 15 > /sys/devices/platform/gpio-hd44780/cmd # init displaying mode
 echo "Factory programming" > /dev/lcd0
+echo timer > /sys/class/leds/usr/trigger
+echo 100 > /sys/class/leds/usr/delay_on
+echo 50 > /sys/class/leds/usr/delay_off
+
+
 
 info "Factory programming started:"
 
