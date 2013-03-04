@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-cd /home/insofter/projects/icd
+cd ${ICDTCP3_DIR}/icd
 
 if ! git status | grep  -q "nothing to commit" 
 then
@@ -13,7 +13,7 @@ VER=`git describe`
 INF=`git log --format=%s -1 | sed 's/[^a-zA-Z0-9 ]//g; s/  / /g'`
 
 
-cd /home/insofter/projects/buildroot
+cd ${ICDTCP3_DIR}/buildroot
 
 git checkout icdtcp3-2011.11 || exit 1
 
