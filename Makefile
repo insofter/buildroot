@@ -707,6 +707,8 @@ relpkg: world
 ##MOJE##MOJE##MOJE##
 newicd: 
 	./make-newicd.sh
+newlinux: 
+	./make-newlinux.sh
 
 ##MOJE##MOJE##MOJE##
 
