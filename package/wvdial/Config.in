@@ -1,0 +1,6 @@
+config BR2_PACKAGE_WVDIAL
+        bool "wvdial"
+        select BR2_PACKAGE_WVSTREAMS
+        help
+          wvdial package
+

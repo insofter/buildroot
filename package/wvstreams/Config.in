@@ -1,0 +1,6 @@
+config BR2_PACKAGE_WVSTREAMS
+        bool "wvstreams"
+        select BR2_PACKAGE_OPENSSL
+        help
+          wvstreams package
+

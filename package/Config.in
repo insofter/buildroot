@@ -486,6 +486,8 @@ source "package/wget/Config.in"
 endif
 source "package/wireless_tools/Config.in"
 source "package/wpa_supplicant/Config.in"
+source "package/wvdial/Config.in"
+source "package/wvstreams/Config.in"
 source "package/xl2tp/Config.in"
 
 endmenu

@@ -1,0 +1,11 @@
+--- wvstreams-4.6.1//include/wvcrash.h	2008-07-14 21:11:35.000000000 +0200
++++ wvstreams-4.6.1//include/wvcrash.h	2013-03-17 12:35:05.783437323 +0100
+@@ -49,4 +49,8 @@
+ extern void setup_console_crash();
+ #endif
+ 
++extern "C"
++    void __assert_fail(const char *__assertion, const char *__file,
++                       unsigned int __line, const char *__function);
++
+ #endif // __WVCRASH_H

@@ -1,0 +1,22 @@
+--- wvstreams-4.6.1//streams/wvlogfile.cc	2009-05-13 23:42:52.000000000 +0200
++++ wvstreams-4.6.1//streams/wvlogfile.cc	2013-03-17 12:42:17.623448380 +0100
+@@ -18,9 +18,7 @@
+ 
+ #define MAX_LOGFILE_SZ	1024*1024*100	// 100 Megs
+ 
+-#ifdef MACOS
+ #define O_LARGEFILE 00000000 // MAC doesn't need Largefile support, so just make it a dummy value when ORd
+-#endif
+ 
+ static time_t gmtoffset()
+ {
+--- wvstreams-4.6.1//wvrules.mk	2009-09-15 19:17:41.000000000 +0200
++++ wvstreams-4.6.1//wvrules.mk	2013-03-17 11:57:05.319378931 +0100
+@@ -84,7 +84,6 @@
+ INCFLAGS=$(addprefix -I,$(WVSTREAMS_INC) $(XPATH))
+ CPPFLAGS+=$(INCFLAGS) \
+ 	-D_BSD_SOURCE -D_GNU_SOURCE $(OSDEFINE) \
+-	-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 \
+ 	-DUNSTABLE
+ 
+ ifeq ($(VERBOSE),1)

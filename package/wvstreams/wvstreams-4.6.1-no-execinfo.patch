@@ -1,0 +1,21 @@
+--- wvstreams-4.6.1//utils/wvcrash.cc	2008-12-17 13:24:20.000000000 +0100
++++ wvstreams-4.6.1//utils/wvcrash.cc	2013-03-17 12:37:32.967441091 +0100
+@@ -28,7 +28,6 @@
+ // FIXME: this file mostly only works in Linux
+ #ifdef __linux
+ 
+-# include <execinfo.h>
+ #include <unistd.h>
+ 
+ #ifdef __USE_GNU
+@@ -267,10 +266,6 @@
+ 	}
+     }
+ 
+-    wr(fd, "\nBacktrace:\n");
+-    backtrace_symbols_fd(trace,
+-		 backtrace(trace, sizeof(trace)/sizeof(trace[0])), fd);
+-    
+     if (pid > 0)
+     {
+         // Wait up to 10 seconds for child to write wvcrash file in case there
