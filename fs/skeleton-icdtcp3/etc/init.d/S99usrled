@@ -1,0 +1,22 @@
+#!/bin/sh
+
+source "/etc/profile.d/icd.sh"
+
+start()
+{
+  echo timer > /sys/class/leds/usr/trigger
+  echo 2000 > /sys/class/leds/usr/delay_on
+  echo 1000 > /sys/class/leds/usr/delay_off
+}	
+
+case "$1" in
+  start)
+    start
+    ;;
+  *)
+    echo $"Usage: $0 {start}"
+    exit 1
+esac
+
+exit $?
+
