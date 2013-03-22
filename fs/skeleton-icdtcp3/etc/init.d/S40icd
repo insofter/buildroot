@@ -22,14 +22,9 @@ start()
   icd-create-live-db 
   echo "++databases"
 
-  icd-run-daemon -- icd-network start
+  # daemon for all networks: eth, wifi, gsm
+  icd-run-daemon --logfile="/tmp/log/net_daemon.log" -- icd-net 
   echo "++network"
-
-  icd-run-daemon --logfile="/tmp/log/wifi_daemon.log" -- icd-wifi-daemon 
-  echo "++wifi"
-
-  icd-run-daemon  -- icd-gsm-daemon 
-  echo "++gsm"
 
   # daemon for lcd and buttons
   icd-run-daemon --nolog -- icd-fc-daemon
