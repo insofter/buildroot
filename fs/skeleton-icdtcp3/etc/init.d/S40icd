@@ -35,8 +35,6 @@ start()
   # daemon for data transfer and sync db
   icd-run-daemon --nolog -- icd-cron 
 
-  # daemon for dnsmasq
-  icd-run-daemon -- icd-dnsmasq
   echo "++daemons"
 
 
