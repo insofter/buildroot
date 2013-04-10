@@ -28,8 +28,8 @@ echo "Factory programming" > /dev/lcd0
 
 info "Factory programming started:"
 
-info "Setting up eth0 address to 192.168.2.21"
-ifconfig eth0 192.168.2.21
+info "Setting up eth0 address to 192.168.123.79"
+ifconfig eth0 192.168.123.79
 test $? -eq 0 || error "Setting eth0 address failed"
 
 info "Attaching system partition"
@@ -47,7 +47,7 @@ test $? -eq 0 || error "Mounting data partition failed"
 cd /mnt
 
 info "Downloading update image"
-curl -O tftp://192.168.2.200/icdtcp3.img
+curl -O tftp://192.168.123.70/icdtcp3.img
 test $? -eq 0 || error "Downloading update image failed"
 
 info "Updating 1st volume"
