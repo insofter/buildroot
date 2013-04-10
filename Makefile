@@ -709,6 +709,8 @@ newicd:
 	./make-newicd.sh
 newlinux: 
 	./make-newlinux.sh
+newu-boot: 
+	./make-newu-boot.sh
 
 ##MOJE##MOJE##MOJE##
 
