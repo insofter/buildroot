@@ -706,11 +706,11 @@ relpkg: world
 
 ##MOJE##MOJE##MOJE##
 newicd: 
-	./make-newicd.sh
+	./make-newrepo.sh icd
 newlinux: 
-	./make-newlinux.sh
+	./make-newrepo.sh linux
 newu-boot: 
-	./make-newu-boot.sh
+	./make-newrepo.sh u-boot
 
 ##MOJE##MOJE##MOJE##
 
