@@ -23,14 +23,14 @@
 /usr/share/udhcpc/default.script  f       755     0      0      -        -        -        -      -
 
 /etc/sudoers.d                    d       755     0      0      -        -        -        -      -
-/etc/sudoers.d/admin              f       440     0      0      -        -        -        -      -
+/etc/sudoers.d/szef               f       440     0      0      -        -        -        -      -
 /etc/sudoers.d/icdtcp3            f       440     0      0      -        -        -        -      -
 
 /home/                            d       755     0      0      -        -        -        -      -
 /home/data                        d       755     0      0      -        -        -        -      -
-/home/admin                       d       700     1000   1000   -        -        -        -      -
-/home/admin/.ssh                  d       700     1000   1000   -        -        -        -      -
-/home/admin/.ssh/authorized_keys  f       600     1000   1000   -        -        -        -      -
+/home/szef                        d       700     1000   1000   -        -        -        -      -
+/home/szef/.ssh                   d       700     1000   1000   -        -        -        -      -
+/home/szef/.ssh/authorized_keys   f       600     1000   1000   -        -        -        -      -
 /etc/ssh_host_dsa_key             f       600     1000   1000   -        -        -        -      -
 /etc/ssh_host_rsa_key             f       600     1000   1000   -        -        -        -      -
 /etc/ssh_host_ecdsa_key           f       600     1000   1000   -        -        -        -      -
