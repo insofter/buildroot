@@ -13,6 +13,16 @@ start()
     mknod /dev/itd2 c 251 2
     mknod /dev/itd3 c 251 3
     mknod /dev/lcd0 c 250 0
+    # workaround because driver output (mknod .. c) is unbuffered 
+    # and can't work properly with poll() (mknod .. p works)
+    mknod /tmp/itd0 p
+    mknod /tmp/itd1 p
+    mknod /tmp/itd2 p
+    mknod /tmp/itd3 p
+    cat /dev/itd0 >> /tmp/itd0 &
+    cat /dev/itd1 >> /tmp/itd1 &
+    cat /dev/itd2 >> /tmp/itd2 &
+    cat /dev/itd3 >> /tmp/itd3 &
     echo "++mknod itdX"
   fi
 
