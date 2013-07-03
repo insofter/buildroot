@@ -40,7 +40,7 @@ start()
   icd-run-daemon --nolog -- icd-fc-daemon
 
   # daemon for fotodetectors
-  icd-run-daemon --nolog -- icd-itd-daemon
+  icd-run-daemon -- icd-counters-daemon
 
   # daemon for data transfer and sync db
   icd-run-daemon --nolog -- icd-cron 
